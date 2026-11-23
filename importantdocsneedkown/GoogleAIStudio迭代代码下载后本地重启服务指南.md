@@ -23,6 +23,7 @@
   node --use-env-proxy --env-file-if-exists=.env.server.local --import tsx server/index.ts
   ```
   它**只自动加载根目录下的 `.env.server.local`**（不会自动读取 `.env`）。仓库中新增的 `.env.example` 仅作配置字段参考模板，不包含真实密钥。
+- **依赖锁文件差异（`bun.lock` 与 `package-lock.json`）**：Google AI Studio 容器底层使用 Bun 管理依赖，因此导出的 ZIP 包中带有 `bun.lock` 而没有 `package-lock.json`。本地与当前线上统一使用 `npm`，日常只需维护本地仓库原有的 `package-lock.json` 这一份锁文件，不需要将 `bun.lock` 纳入 Git 提交（可在本地 `.gitignore` 中添加 `bun.lock`）。
 
 ---
 
@@ -30,15 +31,22 @@
 
 ### 第 1 步：从 Google AI Studio 获取最新代码
 1. 在 Google AI Studio 当前项目页面右上角点击 **Download / 导出代码**，将最新迭代代码下载到本地。
-2. 按团队既有方式将下载后的新代码应用到本机目标代码仓库（注意**保留本地已有的 `.env.server.local`**，不要误覆盖或删除）。
+2. 将新代码应用到本机目标仓库时，注意区分“本地保留项”与“导出包排除项”：
+   - **本地保留（避免被覆盖或误删）**：`.git`、`.idea`、`node_modules`、`.env.server.local`、`.gitignore`、`.nvmrc`、**`package-lock.json`**；
+   - **导出包排除（无需带入本地仓库）**：**`bun.lock`**；
+   - **按需对照**：`.env.example` 为非敏感配置字段模板，如希望同步 AI Studio 侧新增的环境变量说明，可放行更新或与本地版本做一次对照。
+   - *同步小贴士*：
+     * 解压新 ZIP 前先清空上一次的临时解压目录，避免旧 ZIP 中已删除的文件残留；
+     * 若采用 `rsync -avm --delete` 做镜像同步，使用 `--exclude` 列出上述保留项及 `bun.lock` 即可（被 `--exclude` 匹配的路径既不会从源目录拷入，也不会在目标目录被 `--delete` 删除），无需将 `.git`、`node_modules` 等目录临时移出再移回，可避免中断后隐藏文件残留或目录嵌套；
+     * 若目标仓库之前曾同步入 `bun.lock`，手动删除一次后，后续靠 `--exclude='bun.lock'` 与 `.gitignore` 即可保持干净。
 
 ---
 
 ### 第 2 步：停止正在运行的旧 UI 与 API 进程
 在原本运行 `dev:ui` 和 `dev:api` 的两个终端中分别按 `Ctrl + C` 彻底停止旧进程。
 
-- **为什么必须重启**：
-  - `dev:api` 直接由 `node --import tsx server/index.ts` 启动，**不会自动热重载** `server/` 与 `shared/` 目录下的代码变动；
+- **重启原因**：
+  - `dev:api` 直接由 `node --import tsx server/index.ts` 启动，不会自动热重载 `server/` 与 `shared/` 目录下的代码变动；
   - `dev:ui` 在 `vite.config.ts` 中启用了 `strictPort: true`，若 `5173` 端口仍被旧进程占用，重新启动会直接报错退出。
 
 ---
@@ -51,7 +59,7 @@ cd <项目根目录>
 nvm use 24
 ```
 
-若本次从 Google AI Studio 带回的代码更新了 `package.json`（例如 `@google/genai` 升级至 `^3.6.1`、`tsx` 移入 `dependencies` 等），**必须执行一次依赖安装**，否则本地 `node_modules` 中的旧版 SDK 可能导致接口调用或启动失败：
+若本次从 Google AI Studio 带回的代码更新了 `package.json`（例如 `@google/genai` 升级至 `^3.6.1`、`tsx` 移入 `dependencies` 等），执行一次依赖安装，npm 会基于保留的 `package-lock.json` 做增量更新，避免本地 `node_modules` 中的旧版 SDK 引起接口调用或启动异常：
 
 ```bash
 npm install
@@ -150,3 +158,4 @@ npx prettier --write "**/*.{js,jsx,css,json}"
 | AI 接口报 `403 不接受此來源的請求` | 通过自定义域名访问本地服务，但该域名未加入白名单 | 在 `.env.server.local` 中配置 `AI_ALLOWED_ORIGINS=https://<你的访问域名>` 并重启 `dev:api` |
 | AI 请求报模型不可用 / SDK 异常 | 同步了新代码但未更新本地依赖（本地仍为旧版 `@google/genai`） | 在项目根目录执行 `npm install` 后重启 `dev:api` |
 | 看到根目录多出 `server.ts` 不确定该跑哪个 | `server.ts` 是为 Google AI Studio 3000 端口单进程环境新增的入口 | 本地与当前线上继续使用 `npm run dev:api` + `npm run dev:ui`，无需运行 `server.ts` |
+| 同步后发现 `package-lock.json` 被删，或仓库多出 `bun.lock` | AI Studio 底层使用 Bun，导出包携带 `bun.lock` 且不含 `package-lock.json`，同步时未排除两者 | 从 Git 恢复本地 `package-lock.json`，删除 `bun.lock` 并在 `.gitignore` 与同步排除项中加入 `bun.lock`，再执行 `npm install` 增量更新锁文件 |
