@@ -1,0 +1,125 @@
+/* Inline details retain the complete record beneath the compact Pencil 18 table. */
+.log-page-intro {
+  font-size: var(--record-help);
+  line-height: 1.5;
+  color: #596153;
+  margin: 0;
+}
+.log-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.log-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 20px;
+  border-radius: 26px;
+  background: #edf6e9;
+  color: #373531;
+}
+.log-entry-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.log-reading {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.log-entry-time {
+  font-size: 18px;
+  line-height: 27px;
+  color: #373531;
+}
+.log-no-reading {
+  font-size: 16px;
+  line-height: 24px;
+  color: #596153;
+}
+.log-hba1c-entry .log-entry-title {
+  font-size: 24px;
+}
+.log-hba1c-entry .log-entry-time {
+  color: #596153;
+}
+.log-status {
+  align-self: flex-start;
+  font-size: 18px;
+  line-height: 27px;
+  font-weight: 600;
+}
+.log-symptom-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.log-symptom-tags span {
+  overflow-wrap: anywhere;
+}
+.log-symptom-tags [data-active="true"] {
+  background: #dce8cc;
+  outline: 1px solid #446341;
+  border-radius: 5px;
+}
+.log-edit,
+.log-delete {
+  width: 100%;
+  min-height: 56px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid #dce1d8;
+  background: white;
+  color: #373531;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+.log-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: white;
+  border-radius: 26px;
+  font-size: 18px;
+  line-height: 27px;
+}
+.log-filter h2 {
+  font-size: 22px;
+  line-height: 33px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.log-filter p {
+  margin: 0;
+}
+.log-filter button {
+  width: 100%;
+  background: white;
+  border: 1px solid #dce1d8;
+  border-radius: 16px;
+  padding: 12px;
+  min-height: 56px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.log-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 26px;
+  background: #edf6e9;
+  padding: 20px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+.large-font :is(.log-entry-time, .log-no-reading, .log-status) {
+  font-size: 20px;
+}

@@ -1,0 +1,23 @@
+/* Shared overview canvas; secondary editors and chat retain their own surfaces. */
+body:has([data-active-view="me"]) #root,
+body:has([data-active-view="me"]) #root > div {
+  background: #f7f9f5;
+}
+body:has([data-active-view="home"]) #root,
+body:has([data-active-view="home"]) #root > div {
+  background: #f7f9f5;
+}
+body:has([data-active-view="consult"]) #root,
+body:has([data-active-view="consult"]) #root > div {
+  background: #f7faf8;
+}
+
+body:has([data-active-view="glucose"]) #root,
+body:has([data-active-view="glucose"]) #root > div {
+  background: #f7f9f5;
+}
+
+body:has([data-active-view="questions"]) #root,
+body:has([data-active-view="questions"]) #root > div {
+  background: #f7f9f5;
+}

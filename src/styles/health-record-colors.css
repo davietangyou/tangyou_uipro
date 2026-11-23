@@ -1,0 +1,97 @@
+/* Functional identity is separate from clinical status colours. */
+:root {
+  --record-metabolic-soft: #edf6e9;
+  --record-metabolic-selected: #dce8cc;
+  --record-metabolic-ink: #205b3b;
+  --record-metabolic-line: #2b8065;
+  --record-symptom-soft: var(--record-metabolic-soft);
+  --record-symptom-selected: var(--record-metabolic-selected);
+  --record-symptom-ink: #446341;
+  --record-symptom-line: var(--record-metabolic-line);
+}
+.glucose-scope[data-record-tab="analysis"]
+  :is(.glucose-card-green, .glucose-card-purple) {
+  background: var(--record-metabolic-soft);
+}
+.glucose-scope[data-record-tab="analysis"]
+  .glucose-card-purple
+  :is(.hm-cardtitle, .glucose-reading strong) {
+  color: #373531;
+}
+.glucose-scope[data-record-tab="analysis"]
+  .hba1c-trend-card
+  .analysis-trend-icon {
+  background: transparent;
+  color: #373531;
+}
+.glucose-scope[data-record-tab="analysis"]
+  .glucose-card-purple
+  .glucose-card-heading
+  button {
+  background: #f7f9f5;
+  color: #373531;
+}
+.hba1c-chart.glucose-chart {
+  --chart-line: var(--record-metabolic-line);
+  --chart-grid: #dce1d8;
+  --chart-label: #596153;
+}
+.hba1c-entry :is(input, button):focus-visible {
+  outline-color: var(--record-metabolic-ink);
+}
+.glucose-scope[data-record-tab="symptom"] {
+  --symptom-sage: var(--record-metabolic-soft);
+  --symptom-blue: var(--record-metabolic-soft);
+  --symptom-lilac: var(--record-metabolic-soft);
+  --symptom-blue-selected: var(--record-symptom-selected);
+  --symptom-divider: #c5d9c2;
+  --symptom-focus: var(--record-symptom-line);
+}
+.glucose-scope[data-record-tab="symptom"] .symptom-summary h3 {
+  color: #373531;
+}
+.glucose-scope[data-record-tab="symptom"]
+  .symptom-ranges
+  [aria-selected="true"] {
+  background: #2f3033;
+  color: white;
+}
+.glucose-scope[data-record-tab="symptom"] .symptom-show-all {
+  color: #373531;
+}
+.glucose-scope[data-record-tab="symptom"] .symptom-summary {
+  background: var(--record-metabolic-soft);
+}
+.glucose-scope[data-record-tab="symptom"] .symptom-choice[aria-pressed="true"] {
+  background: #dce8cc;
+  border-color: var(--record-symptom-line);
+}
+.glucose-scope[data-record-tab="symptom"]
+  .symptom-choice[aria-pressed="true"]
+  .symptom-check {
+  background: var(--record-symptom-ink);
+  border-color: var(--record-symptom-ink);
+}
+.glucose-scope[data-record-tab="log"]
+  :is(.log-entry-icon, .log-hba1c-entry .log-entry-icon) {
+  background: var(--record-metabolic-soft);
+  color: var(--record-metabolic-ink);
+}
+.glucose-scope[data-record-tab="log"] .log-symptom-entry .log-entry-icon,
+.glucose-scope[data-record-tab="log"] .log-symptom-tags span,
+.glucose-scope[data-record-tab="log"] .log-filter {
+  background: var(--record-symptom-soft);
+  color: var(--record-symptom-ink);
+}
+.glucose-scope[data-record-tab="symptom"] .symptom-count-list li {
+  border-color: var(--symptom-divider);
+}
+
+.glucose-scope[data-record-tab="symptom"]
+  :is(.symptom-custom, .symptom-selected-list li) {
+  border-color: var(--symptom-divider);
+}
+.glucose-scope[data-record-tab="log"] .log-symptom-tags [data-active="true"] {
+  background: var(--record-symptom-selected);
+  outline-color: var(--record-symptom-line);
+}

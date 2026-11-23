@@ -1,0 +1,154 @@
+/* Shared semantic sizes across record panels and entry controls. */
+.record-entry {
+  container-type: inline-size;
+  min-width: 0;
+}
+.record-time-picker {
+  container-type: inline-size;
+}
+.record-time-picker.record-time-picker [role="option"] {
+  font-size: var(--record-control);
+  line-height: 1.15;
+  overflow-wrap: normal;
+}
+@container (max-width:350px) {
+  .record-time-picker.record-time-picker [role="option"] {
+    font-size: 16px;
+  }
+  .large-font .record-time-picker.record-time-picker [role="option"] {
+    font-size: 18px;
+  }
+}
+:root {
+  --record-title: 28px;
+  --record-heading: 22px;
+  --record-body: 18px;
+  --record-help: 16px;
+  --record-control: 16px;
+  --record-entry-title: 28px;
+}
+.large-font {
+  --record-title: 36px;
+  --record-heading: 26px;
+  --record-body: 22px;
+  --record-help: 18px;
+  --record-control: 20px;
+  --record-entry-title: 30px;
+}
+:is(.glucose-scope, .record-entry, .hba1c-entry, .record-time-picker) {
+  font-family: "Noto Sans TC", var(--font-sans);
+  font-weight: 400;
+  --glucose-body: var(--record-body);
+  --glucose-help: var(--record-help);
+}
+:is(.glucose-scope, .record-entry, .hba1c-entry, .record-time-picker)
+  :is(button, input, textarea, select, svg) {
+  font-family: inherit;
+}
+.glucose-scope.glucose-scope[data-record-tab] .hm-title {
+  font-size: var(--record-title);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.glucose-scope.glucose-scope[data-record-tab]
+  :is(.analysis-page-intro, .symptom-page-intro, .log-page-intro) {
+  font-size: var(--record-help);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.glucose-scope.glucose-scope[data-record-tab]
+  :is(
+    .glucose-card-heading .hm-cardtitle,
+    .glucose-stats > div > button .hm-cardtitle,
+    .symptom-choice-copy h2,
+    .log-date
+  ) {
+  font-size: var(--record-heading);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.glucose-scope.glucose-scope[data-record-tab]
+  :is(
+    .symptom-review-heading p,
+    .glucose-latest > p,
+    .analysis-hba1c-hero .t-support,
+    .hba1c-trend-meta .t-support,
+    .glucose-method,
+    .demo-caption,
+    .log-edit-hint,
+    .log-no-reading
+  ) {
+  font-size: var(--record-help);
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: normal;
+}
+.glucose-scope.glucose-scope[data-record-tab]
+  :is(.record-add-actions button, .record-primary, .record-secondary) {
+  font-size: var(--record-body);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.glucose-scope.glucose-scope[data-record-tab]
+  :is(
+    .analysis-ranges button,
+    .symptom-ranges button,
+    .symptom-context-label,
+    .symptom-count-list button,
+    .log-day-count,
+    .log-unit
+  ) {
+  font-size: var(--record-control);
+  line-height: 1.5;
+}
+:is(.record-entry, .hba1c-entry, .record-time-picker) .hm-cardtitle {
+  font-size: var(--record-heading);
+  font-weight: 600;
+  line-height: 1.5;
+}
+:is(.record-entry, .hba1c-entry, .record-time-picker)
+  :is(.hm-body, .hm-btn, .record-tag-choice) {
+  font-size: var(--record-body);
+  line-height: 1.5;
+}
+:is(.record-entry, .hba1c-entry) .record-entry-title {
+  font-size: var(--record-entry-title);
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.glucose-scope[data-record-tab]
+  :is(.symptom-stat-heading > div, .symptom-context button) {
+  min-width: 0;
+}
+
+/* Keep non-measurement callers (including medication) on their prior typography. */
+.record-time-picker:not(.record-measurement-picker) {
+  --record-heading: 21px;
+  --record-help: 14px;
+  font-family: var(--font-sans);
+}
+.large-font .record-time-picker:not(.record-measurement-picker) {
+  --record-heading: 26px;
+  --record-help: 18px;
+}
+
+.glucose-scope[data-record-tab="symptom"]
+  :is(.symptom-stat-heading h3, .symptom-summary h3) {
+  font-size: 18px;
+  line-height: 27px;
+  font-weight: 600;
+}
+
+.glucose-scope[data-record-tab="symptom"] .symptom-choice-grid .symptom-choice {
+  font-size: var(--record-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+:is(.record-entry, .hba1c-entry, .record-measurement-picker) .t-support {
+  font-weight: 400;
+}
+.record-tag-sheet .record-entry-title {
+  font-weight: 600;
+}

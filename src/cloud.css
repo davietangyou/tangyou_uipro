@@ -1,0 +1,113 @@
+.cloud-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #eaf3ef;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  overflow: auto;
+  color: #183f32;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+.cloud-card {
+  width: min(100%, 420px);
+  background: white;
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 10px 35px #1d544028;
+}
+.cloud-card h1 {
+  font-size: 28px;
+  margin: 0 0 12px;
+}
+.cloud-card h2 {
+  font-size: 21px;
+}
+.cloud-card label {
+  display: block;
+  margin: 14px 0;
+}
+.cloud-card input,
+.cloud-card select,
+.cloud-account-settings input,
+.cloud-account-settings select {
+  width: 100%;
+  border: 1px solid #a7c4b6;
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  margin-top: 5px;
+}
+.cloud-card button,
+.cloud-account-settings button {
+  border: 0;
+  border-radius: 8px;
+  background: #16734f;
+  color: white;
+  padding: 9px 14px;
+  cursor: pointer;
+  margin: 5px 5px 5px 0;
+}
+.cloud-card button.secondary,
+.cloud-account-settings button.secondary {
+  background: #e3eee9;
+  color: #194b36;
+}
+.cloud-card button:disabled,
+.cloud-account-settings button:disabled {
+  opacity: 0.5;
+}
+.cloud-error {
+  color: #a72626;
+}
+.cloud-export {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #d3e2da;
+}
+.cloud-export button {
+  min-height: 44px;
+}
+.cloud-export p {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.profile-account-settings {
+  margin: 20px 0;
+  border-top: 1px solid #d3e2da;
+  padding-top: 12px;
+  color: var(--color-text-primary, #173c2e);
+}
+.profile-account-settings > summary {
+  cursor: pointer;
+  min-height: 52px;
+  align-content: center;
+  font-size: 20px;
+  font-weight: 600;
+}
+.cloud-account-settings {
+  padding: 8px 0 16px;
+  overflow-wrap: anywhere;
+}
+.cloud-account-settings p {
+  line-height: 1.5;
+}
+.cloud-account-settings h3 {
+  font-size: 18px;
+  margin: 16px 0 8px;
+}
+.cloud-account-settings button {
+  min-height: 48px;
+  font: inherit;
+}
+.cloud-account-settings input {
+  box-sizing: border-box;
+}
+.cloud-account-settings button:disabled {
+  cursor: default;
+}

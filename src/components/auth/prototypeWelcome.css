@@ -1,0 +1,84 @@
+.prototype-welcome {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  padding: clamp(48px, 27.46dvh, 240px) 24px
+    max(40px, env(safe-area-inset-bottom));
+  background: var(--ui-bg) url("../../assets/analysis/leaves-background.webp")
+    center / cover no-repeat;
+  color: #373531;
+  font-family: "Noto Sans TC", var(--font-sans);
+  box-sizing: border-box;
+}
+.prototype-welcome-content {
+  width: 100%;
+  max-width: 354px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.prototype-welcome-brand {
+  margin: 0;
+  color: #446341;
+  font-size: 18px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+.prototype-welcome h1 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.3;
+  font-weight: 650;
+}
+.prototype-welcome-description {
+  margin: 0;
+  color: var(--ui-muted);
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.prototype-welcome-start {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 64px;
+  padding: 16px 24px;
+  border: 0;
+  border-radius: 16px;
+  color: var(--ui-surface);
+  background: #2f3033;
+  font: inherit;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.prototype-welcome-start:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.prototype-welcome-start:focus-visible {
+  outline: 3px solid var(--ui-selected);
+  outline-offset: 4px;
+}
+.prototype-welcome-error {
+  color: var(--color-danger, #b91239);
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+.prototype-welcome-status {
+  font-size: 20px;
+  color: var(--ui-muted);
+}
+.large-font .prototype-welcome h1 {
+  font-size: 48px;
+}
+.large-font .prototype-welcome-description,
+.large-font .prototype-welcome-start {
+  font-size: 24px;
+}

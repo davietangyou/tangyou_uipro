@@ -1,0 +1,56 @@
+{
+  "name": "tangde01",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build",
+    "build:cloud": "VITE_CLOUD_MODE=true vite build",
+    "build:cloudflare": "npm run build:cloud -- --base=/ && node deploy/cloudflare/prepare-assets.mjs",
+    "test:cloudflare": "node --test deploy/cloudflare/worker.test.mjs",
+    "deploy:cloudflare": "wrangler deploy",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "dev:ui": "vite",
+    "dev:api": "node --use-env-proxy --env-file-if-exists=.env.server.local --import tsx server/index.ts",
+    "test:ai:live": "node --import tsx scripts/verify-ai-live.ts",
+    "api:generate": "openapi-typescript backend/openapi.json -o src/generated/api.d.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^1.35.0",
+    "lucide-react": "^1.8.0",
+    "motion": "^12.42.2",
+    "openapi-fetch": "^0.17.0",
+    "opencc-js": "^1.4.2",
+    "prettier": "^3.9.5",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-markdown": "^10.1.0",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "miniflare": "5.20261019.1-beta",
+    "openapi-typescript": "^7.13.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.13",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0",
+    "wrangler": "4.151.3"
+  },
+  "engines": {
+    "node": ">=24.5.0"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true,
+    "workerd@1.20261019.1": true,
+    "protobufjs@7.6.6": true,
+    "@google/genai@1.52.0": true
+  }
+}

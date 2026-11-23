@@ -1,0 +1,355 @@
+.appointment-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  gap: 12px;
+  padding: 22px 20px 10px;
+  background: #e9dffe;
+  color: #373531;
+  font-family: "Noto Sans TC", var(--font-sans);
+}
+.appointment-card::before {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  top: -58px;
+  right: 0;
+  width: 373.32px;
+  height: 256.36px;
+  background: var(--home-appointment-art) center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+.appointment-heading {
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 100px;
+}
+.appointment-heading-and-date {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.appointment-card .care-eyebrow {
+  margin: 0;
+  color: #686569;
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.care-card.appointment-card .appointment-heading h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.appointment-card .appointment-date {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.appointment-date-part {
+  white-space: nowrap;
+}
+.appointment-date-part + .appointment-date-part {
+  color: #68616f;
+  font-size: 17px;
+  font-weight: 400;
+}
+.appointment-card > p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.appointment-card :is(.care-warning, .appointment-status) {
+  min-height: 48px;
+  padding: 12px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff1d6;
+  color: #774408;
+  font-weight: 400;
+}
+.appointment-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.appointment-meta:has(> p + p) {
+  min-height: 58px;
+}
+.appointment-card .appointment-meta > p {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.appointment-card .appointment-status {
+  background: #eaf3e2;
+  color: #446341;
+}
+.appointment-actions {
+  display: flex;
+  gap: 10px;
+}
+.appointment-card .appointment-actions .care-secondary {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px;
+  gap: 6px;
+  border: 1.5px solid #dce1d8;
+  border-radius: 16px;
+  background: white;
+  color: #373531;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.appointment-card .appointment-status-actions .care-secondary {
+  background: #ffffff88;
+}
+.appointment-actions svg {
+  flex-shrink: 0;
+}
+.appointment-card.appointment-compact {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 6px;
+  padding: 12px;
+  border-radius: 22px;
+  background: #e8e0f3;
+}
+.appointment-compact::before {
+  display: none;
+}
+.appointment-compact .appointment-heading-and-date {
+  grid-column: 1/-1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+}
+.appointment-compact .appointment-heading {
+  flex-shrink: 0;
+  min-height: 0;
+  padding: 0;
+}
+.care-card.appointment-compact .appointment-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+}
+.appointment-compact .appointment-heading svg {
+  color: #655672;
+  flex-shrink: 0;
+}
+.appointment-compact .appointment-date {
+  justify-content: flex-end;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 28px;
+  text-align: right;
+}
+.appointment-compact
+  > :is(
+    .appointment-actions,
+    .appointment-meta,
+    .care-warning,
+    .appointment-status
+  ) {
+  grid-column: 1/-1;
+}
+.appointment-compact:has(.appointment-status-actions)
+  > .appointment-actions:not(.appointment-status-actions) {
+  grid-column: 1;
+}
+.appointment-compact > .appointment-status-actions {
+  grid-column: 2/-1;
+}
+.appointment-compact .appointment-actions {
+  gap: 6px;
+}
+.appointment-card.appointment-compact .appointment-actions .care-secondary {
+  min-height: 48px;
+  padding: 6px;
+  border-width: 1px;
+  border-radius: 14px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.appointment-compact .appointment-status-actions svg {
+  display: none;
+}
+.large-font .appointment-compact .appointment-heading-and-date {
+  flex-wrap: wrap;
+}
+.large-font .care-card.appointment-compact .appointment-heading h2 {
+  font-size: 22px;
+  line-height: 1.4;
+}
+.large-font .appointment-compact .appointment-date {
+  font-size: 22px;
+  line-height: 1.4;
+}
+.large-font
+  .appointment-compact:has(.appointment-status-actions)
+  > .appointment-actions {
+  grid-column: 1/-1;
+}
+.large-font
+  .appointment-card.appointment-compact
+  .appointment-actions
+  .care-secondary {
+  font-size: 20px;
+}
+.appointment-summary {
+  padding: 12px 16px;
+  gap: 8px;
+  background: #e8e0f3;
+}
+.appointment-summary::before {
+  right: 0;
+  top: 0;
+  width: 142px;
+  height: 122px;
+  background-position: right -4px top -20px;
+  background-size: 260px 178.5px;
+  mask-image:
+    linear-gradient(to right, transparent, #000 30px),
+    linear-gradient(to bottom, #000 106px, transparent);
+  mask-composite: intersect;
+}
+.appointment-summary .appointment-heading-and-date {
+  width: calc(100% - 126px);
+  min-width: 160px;
+  min-height: 104px;
+  gap: 4px;
+}
+.appointment-summary .appointment-heading {
+  min-height: 0;
+  padding: 0;
+  gap: 4px;
+}
+.appointment-summary .care-eyebrow {
+  color: #596153;
+  font-size: 16px;
+  line-height: 1.3;
+}
+.care-card.appointment-summary .appointment-heading h2 {
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.appointment-summary .appointment-date {
+  font-size: 18px;
+  line-height: 1.3;
+  gap: 6px;
+}
+.appointment-summary .appointment-date-part + .appointment-date-part {
+  color: #596153;
+  font-size: 14px;
+}
+.appointment-summary .appointment-actions {
+  gap: 8px;
+}
+.appointment-summary .appointment-actions .care-secondary {
+  font-size: 16px;
+  padding: 8px 4px;
+}
+.large-font .appointment-summary .appointment-heading-and-date {
+  width: 100%;
+  padding-right: 112px;
+}
+.large-font .appointment-card .appointment-heading h2 {
+  font-size: 34px;
+}
+.large-font .home-appointment-card .appointment-heading {
+  padding-right: 140px;
+}
+.large-font .home-appointment-card .appointment-heading h2 {
+  text-wrap: balance;
+}
+.large-font .appointment-card .appointment-date {
+  font-size: 23px;
+}
+.large-font
+  .appointment-card
+  :is(
+    .care-eyebrow,
+    .appointment-date-part + .appointment-date-part,
+    .appointment-actions .care-secondary
+  ) {
+  font-size: 20px;
+}
+.large-font .appointment-card > p {
+  font-size: 20px;
+}
+.large-font .appointment-card .appointment-meta > p {
+  font-size: 20px;
+}
+@container (width < 330px) {
+  .appointment-card .appointment-actions .care-secondary {
+    font-size: 16px;
+  }
+}
+
+.appointment-editor form.care-card {
+  padding: 18px;
+  gap: 20px;
+  border-radius: 26px;
+  font-family: "Noto Sans TC", var(--font-sans);
+}
+.appointment-editor h2 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.appointment-editor-heading {
+  position: relative;
+}
+.appointment-editor-heading h2 {
+  padding-right: 60px;
+}
+.appointment-editor .care-field {
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.appointment-editor .care-field input {
+  min-height: 56px;
+  border: 1.5px solid #dce1d8;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: white;
+  color: #373531;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.appointment-editor .care-actions {
+  flex-direction: column;
+  gap: 20px;
+}
+.appointment-editor .care-actions > button {
+  min-height: 56px;
+  border-radius: 16px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+.appointment-editor .care-secondary {
+  background: white;
+  border: 1.5px solid #dce1d8;
+}

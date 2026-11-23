@@ -1,0 +1,253 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-11T01:01:00.377824+00:00",
+  "description": "示範健康資料；AI 對話於騰訊雲部署驗收時實際產生，並非個人醫療紀錄。",
+  "profile": {
+    "name": "陳伯伯",
+    "age": 68,
+    "sex": "male",
+    "heightCm": 168,
+    "weight": 72,
+    "weightUnit": "kg",
+    "diabetesType": "type2",
+    "diagnosisYear": 2015,
+    "diabetesDurationYears": 11,
+    "usesDiabetesMeds": "yes",
+    "usesInsulin": "no",
+    "medications": [
+      {
+        "name": "二甲雙胍 Metformin",
+        "dosage": "500mg",
+        "usage": "每日兩次，餐後",
+        "id": "legacy-medication-0",
+        "reminderEnabled": false
+      },
+      {
+        "name": "格列齊特 Gliclazide",
+        "id": "legacy-medication-1",
+        "reminderEnabled": false
+      }
+    ],
+    "noChronicConditions": false,
+    "conditions": ["高血壓", "高血脂"],
+    "conditionDetails": {},
+    "otherConditionNote": "",
+    "hasCaregiver": true,
+    "livesAlone": false,
+    "dietHabits": ["OUTSIDE_EATING", "SUGARY_DRINK"],
+    "favoriteFoods": "",
+    "exerciseFreq": "3-4",
+    "exerciseMinutes": null,
+    "exerciseIntensity": "MODERATE",
+    "exerciseTypes": ["WALK", "TAICHI"],
+    "otherExerciseNote": "",
+    "savedDoctorQuestions": [
+      "最近餐後血糖偏高，需要調整飲食或藥物嗎？",
+      "我是否適合使用持續血糖監測器？",
+      "夜晚偶爾出汗，會不會是低血糖？",
+      "服用 Metformin 後腸胃不適，可以怎樣處理？",
+      "每日應該步行多長時間？",
+      "請指導我如何規範記錄餐前、餐後血糖及對應飲食細節，以便您更準確評估我的血糖控制與用藥方案？"
+    ],
+    "nextClinicQuestions": [
+      "最近餐後血糖偏高，需要調整飲食或藥物嗎？",
+      "我是否適合使用持續血糖監測器？",
+      "請指導我如何規範記錄餐前、餐後血糖及對應飲食細節，以便您更準確評估我的血糖控制與用藥方案？"
+    ],
+    "nextClinicDate": "2026-09-18",
+    "medicationIntakes": [],
+    "medicationLogDate": "2026-09-11"
+  },
+  "glucose": [
+    {
+      "id": "g-1789088334040-lhxxs",
+      "value": 6.4,
+      "timestamp": 1789088280000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-0-1789082400000",
+      "value": 6.4,
+      "timestamp": 1789082400000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-3-1789047600000",
+      "value": 11.8,
+      "timestamp": 1789047600000,
+      "timeType": "postMeal",
+      "mealTag": "dinner",
+      "dietNote": "茶餐廳、甜品",
+      "symptoms": ["口乾口渴", "極度疲倦"]
+    },
+    {
+      "id": "seed-2-1788995400000",
+      "value": 7.6,
+      "timestamp": 1788995400000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-5-1788939000000",
+      "value": 3.6,
+      "timestamp": 1788939000000,
+      "timeType": "random",
+      "symptoms": ["頭暈", "冒冷汗", "心悸手震"]
+    },
+    {
+      "id": "seed-4-1788908100000",
+      "value": 5.9,
+      "timestamp": 1788908100000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-7-1788843000000",
+      "value": 8.7,
+      "timestamp": 1788843000000,
+      "timeType": "postMeal",
+      "mealTag": "lunch",
+      "dietNote": "粥、青菜",
+      "symptoms": []
+    },
+    {
+      "id": "seed-6-1788823800000",
+      "value": 6.1,
+      "timestamp": 1788823800000,
+      "timeType": "fasting",
+      "exerciseNote": "太極",
+      "symptoms": []
+    },
+    {
+      "id": "seed-8-1788736500000",
+      "value": 6.8,
+      "timestamp": 1788736500000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-9-1788703800000",
+      "value": 7.2,
+      "timestamp": 1788703800000,
+      "timeType": "bedtime",
+      "symptoms": []
+    },
+    {
+      "id": "seed-10-1788564300000",
+      "value": 6.5,
+      "timestamp": 1788564300000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-11-1788498900000",
+      "value": 10.4,
+      "timestamp": 1788498900000,
+      "timeType": "postMeal",
+      "mealTag": "lunch",
+      "dietNote": "麵食",
+      "symptoms": ["視力模糊"]
+    },
+    {
+      "id": "seed-12-1788303900000",
+      "value": 7.1,
+      "timestamp": 1788303900000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-13-1788175200000",
+      "value": 5.4,
+      "timestamp": 1788175200000,
+      "timeType": "preMeal",
+      "mealTag": "dinner",
+      "exerciseNote": "行樓梯",
+      "symptoms": []
+    },
+    {
+      "id": "seed-14-1787960400000",
+      "value": 6.3,
+      "timestamp": 1787960400000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-15-1787718600000",
+      "value": 9.6,
+      "timestamp": 1787718600000,
+      "timeType": "postMeal",
+      "mealTag": "lunch",
+      "dietNote": "飲品、水果",
+      "symptoms": []
+    },
+    {
+      "id": "seed-16-1787353200000",
+      "value": 6.9,
+      "timestamp": 1787353200000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-17-1786974600000",
+      "value": 12.3,
+      "timestamp": 1786974600000,
+      "timeType": "postMeal",
+      "mealTag": "dinner",
+      "dietNote": "甜品",
+      "symptoms": ["頻尿", "口乾口渴"]
+    },
+    {
+      "id": "seed-18-1786404900000",
+      "value": 6.6,
+      "timestamp": 1786404900000,
+      "timeType": "fasting",
+      "symptoms": []
+    },
+    {
+      "id": "seed-19-1785819600000",
+      "value": 8.9,
+      "timestamp": 1785819600000,
+      "timeType": "postMeal",
+      "mealTag": "lunch",
+      "symptoms": []
+    }
+  ],
+  "hba1c": [
+    {
+      "id": "987a2c59-7710-4f69-8052-6b61f7a681d7",
+      "value": "6.8",
+      "date": "2026-09-11",
+      "time": "09:00",
+      "timestamp": 1789088400000
+    }
+  ],
+  "conversations": [
+    {
+      "id": "1789088058088-b8puq",
+      "title": "這是功能示範，資料均為模擬。我想下次覆診問醫生：",
+      "messages": [
+        {
+          "id": "1789088093395-aem35",
+          "role": "user",
+          "source": "user",
+          "text": "這是功能示範，資料均為模擬。我想下次覆診問醫生：應怎樣記錄餐前、餐後血糖和飲食，方便醫生了解變化？請幫我整理成一條可以儲存的問題。",
+          "timestamp": 1789088093395,
+          "delivery": "sent"
+        },
+        {
+          "id": "1789088099564-t38nr",
+          "role": "ai",
+          "source": "qwen",
+          "text": "收到，這是非常實用的覆診準備問題。建議記錄時涵蓋「時間、數值、對應餐食內容」及「有無不適症狀」。\n\n例如：\n1. **空腹**：起床後未進食前測。\n2. **餐後**：從吃第一口飯計時，2小時後測，並簡記該餐主要食物（如飯量、菜式）。\n3. **隨機/睡前**：如有頭暈、心慌等低血糖徵狀，或睡前常規監測時記錄。\n\n這樣能幫醫生判斷藥物與飲食的配合情況。",
+          "timestamp": 1789088099564,
+          "shouldSave": true,
+          "doctorQuestion": "請指導我如何規範記錄餐前、餐後血糖及對應飲食細節，以便您更準確評估我的血糖控制與用藥方案？",
+          "suggestionState": "saved"
+        }
+      ],
+      "createdAt": 1789088058088
+    }
+  ]
+}

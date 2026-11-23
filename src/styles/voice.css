@@ -1,0 +1,125 @@
+.floating-voice {
+  position: absolute;
+  z-index: 300;
+  width: 60px;
+  height: 60px;
+  pointer-events: auto;
+}
+.floating-voice-button {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: var(--ui-brand);
+  color: var(--ui-ink);
+  box-shadow: 0 4px 18px #23261f2e;
+  touch-action: none;
+  user-select: none;
+}
+.floating-voice-button:focus-visible {
+  outline: 3px solid #386047;
+  outline-offset: 3px;
+}
+.floating-voice-button.is-listening {
+  background: #ae3431;
+  color: white;
+}
+.floating-voice-button[hidden] {
+  display: none;
+}
+.floating-recording-panel {
+  position: absolute;
+  z-index: 301;
+  pointer-events: auto;
+}
+.voice-recording {
+  color: var(--ui-ink);
+}
+.voice-recording-status {
+  margin: 0 0 8px;
+  color: var(--ui-muted);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.voice-recording-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 76px;
+  padding: 10px;
+  border-radius: 38px;
+  background: white;
+}
+.voice-recording-bar > button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 26px;
+  background: #eff2ec;
+  color: var(--ui-ink);
+}
+.voice-recording-bar > button:focus-visible {
+  outline: 3px solid #386341;
+  outline-offset: 2px;
+}
+.voice-recording-bar > button:disabled {
+  opacity: 0.45;
+}
+.voice-recording-bar > .voice-recording-submit {
+  background: var(--ui-brand);
+  font-size: 17px;
+  font-weight: 600;
+}
+.voice-recording-meter {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.voice-recording-meter > span {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ui-muted);
+  font-variant-numeric: tabular-nums;
+}
+.voice-recording-level {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  gap: 3px;
+}
+.voice-recording-level i {
+  width: 3px;
+  max-width: 3px;
+  flex: 1;
+  background: var(--ui-muted);
+  border-radius: 2px;
+}
+.voice-recording[data-stage="listening"] .voice-recording-level i {
+  animation: voice-level 850ms ease-in-out infinite alternate;
+}
+@keyframes voice-level {
+  to {
+    transform: scaleY(0.35);
+    opacity: 0.5;
+  }
+}
+.large-font .voice-recording-status {
+  font-size: 20px;
+  line-height: 30px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .voice-recording-level i {
+    animation: none !important;
+  }
+}

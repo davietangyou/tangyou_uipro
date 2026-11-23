@@ -1,0 +1,13 @@
+/* Shared foundations; consumers opt in without changing legacy pages. */
+:root {
+  --ui-bg: #f6f7f5;
+  --ui-surface: #fff;
+  --ui-brand: #dce8cc;
+  --ui-blue: #d7eaf0;
+  --ui-purple: #e8def1;
+  --ui-yellow: #f7e8a7;
+  --ui-ink: #2f312e;
+  --ui-muted: #596153;
+  --ui-border: #7a8374;
+  --ui-selected: #386341;
+}

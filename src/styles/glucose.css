@@ -1,0 +1,661 @@
+.glucose-scope {
+  --glucose-body: 1.125rem;
+  --glucose-help: 1rem;
+  color: var(--ui-ink);
+  padding: 24px 18px 32px;
+  gap: 20px;
+}
+.glucose-scope :is(.hm-body, .hm-btn) {
+  font-size: var(--glucose-body);
+  line-height: 1.5;
+}
+.glucose-scope .t-support {
+  font-size: var(--glucose-help);
+  line-height: 1.5;
+  font-weight: 400;
+}
+.glucose-scope .hm-title {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.glucose-scope .hm-cardtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.glucose-scope :is(.text-ink-soft, .text-ink-muted) {
+  color: var(--ui-muted);
+}
+.glucose-card {
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--ui-surface);
+}
+.glucose-card-green {
+  background: var(--ui-brand);
+}
+.glucose-card-purple {
+  background: var(--ui-purple);
+}
+.glucose-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.glucose-card-heading h2 {
+  min-width: 0;
+}
+.glucose-card-heading button {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  box-shadow: none;
+}
+.glucose-latest {
+  margin-bottom: 18px;
+}
+.glucose-latest p {
+  color: var(--ui-muted);
+  margin: 4px 0;
+}
+.glucose-reading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.glucose-reading strong {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.glucose-reading span {
+  font-size: var(--glucose-help);
+}
+.glucose-plot {
+  margin-top: 18px;
+}
+.glucose-empty {
+  padding: 20px 0 8px;
+}
+.glucose-method {
+  margin: 12px 0;
+  color: var(--ui-muted);
+}
+.glucose-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.glucose-stat {
+  text-align: center;
+  min-width: 0;
+  padding: 12px 0;
+}
+.glucose-stat-value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.glucose-stat-value .hm-cardtitle {
+  font-size: 2rem;
+  font-weight: 600;
+}
+.glucose-scope [role="tablist"] {
+  box-shadow: none;
+  border-radius: 16px;
+}
+.glucose-scope [role="tab"] {
+  box-shadow: none;
+  font-weight: 500;
+  min-width: 0;
+}
+.glucose-scope :is(button, input):focus-visible {
+  outline: 3px solid var(--ui-selected);
+  outline-offset: 2px;
+}
+.large-font .glucose-scope {
+  --glucose-body: 0.977778rem;
+  --glucose-help: 0.844444rem;
+}
+.large-font .glucose-scope .glucose-stat-grid {
+  grid-template-columns: 1fr;
+}
+.large-font .glucose-scope .glucose-stat {
+  text-align: left;
+  border-bottom: 1px solid var(--ui-border);
+}
+.glucose-chart {
+  --chart-line: #386d85;
+  --chart-label: var(--ui-muted);
+  --chart-grid: #b5bdae;
+  font-family: inherit;
+}
+.glucose-chart text {
+  font-weight: 400;
+}
+.glucose-stats > div > button > span:first-child {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+}
+.glucose-scope [class*="shadow-"] {
+  box-shadow: none;
+}
+.glucose-log-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 10px;
+  border-radius: 0;
+  padding: 18px 0;
+}
+.glucose-log-row > div:first-child {
+  width: 36px;
+  height: 36px;
+}
+.glucose-log-value > div {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.glucose-log-symptom > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+}
+.glucose-log-symptom > div:nth-child(2) > div:last-child {
+  order: -1;
+  margin: 0 0 8px;
+}
+.glucose-log-symptom > div:nth-child(2) > div:last-child span {
+  font-size: var(--glucose-body);
+  color: var(--ui-ink);
+  background: transparent;
+  padding: 0;
+}
+.large-font .glucose-scope .glucose-log-value {
+  grid-column: 2 / -1;
+  align-items: flex-start;
+}
+.large-font .glucose-scope .glucose-log-value > div {
+  align-items: flex-start;
+}
+.glucose-scope {
+  container-type: inline-size;
+}
+@container (width < 18rem) {
+  .glucose-stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .glucose-log-value {
+    grid-column: 2 / -1;
+    align-items: flex-start;
+  }
+  .glucose-log-value > div {
+    align-items: flex-start;
+  }
+  .glucose-scope [role="tablist"] {
+    flex-wrap: wrap;
+  }
+}
+.glucose-scope :is(p, span) {
+  overflow-wrap: anywhere;
+}
+.glucose-log-row {
+  min-width: 0;
+}
+.glucose-scope .glucose-stat-value .t-support {
+  font-weight: 400;
+}
+.glucose-scope .glucose-card-heading .hm-cardtitle {
+  font-weight: 500;
+}
+/* The three optional record sheets share the profile selection language. */
+.record-tag-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  max-width: 100%;
+  padding: 12px;
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  text-align: left;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+.record-tag-choice[aria-pressed="true"] {
+  background: var(--ui-brand);
+  border-color: var(--ui-selected);
+  box-shadow: inset 0 0 0 1px var(--ui-selected);
+}
+.record-tag-mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: 2px solid var(--ui-muted);
+  border-radius: 5px;
+}
+.record-tag-choice[aria-pressed="true"] .record-tag-mark {
+  background: var(--ui-selected);
+  border-color: var(--ui-selected);
+  color: white;
+}
+.record-tag-choice:focus-visible {
+  outline: 3px solid var(--ui-selected);
+  outline-offset: 3px;
+}
+.large-font .record-tag-choice {
+  font-size: 0.977778rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .record-tag-choice {
+    transition: none;
+  }
+}
+
+/* Client round 1: clear record destinations and separate entry / review. */
+.glucose-scope {
+  gap: 20px;
+  padding-bottom: 40px;
+}
+.glucose-scope .record-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px;
+  background: var(--ui-surface);
+}
+.glucose-scope .record-tabs button {
+  min-width: 0;
+  min-height: 52px;
+  height: auto;
+  align-self: stretch;
+  padding: 8px 4px;
+  border-radius: 12px;
+  line-height: 1.35;
+  overflow-wrap: normal;
+}
+.glucose-scope .record-tabs [aria-selected="true"] {
+  background: var(--ui-brand);
+  box-shadow: inset 0 0 0 1px var(--ui-selected);
+}
+.hba1c-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.hba1c-content header p {
+  margin-top: 6px;
+}
+.demo-caption {
+  color: var(--ui-muted);
+}
+.record-primary,
+.record-secondary {
+  min-height: 52px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: var(--glucose-body);
+  line-height: 1.5;
+  font-weight: 500;
+  text-align: center;
+}
+.record-primary {
+  background: var(--ui-ink);
+  color: white;
+  width: 100%;
+}
+.record-secondary {
+  background: white;
+  color: var(--ui-ink);
+  border: 1px solid var(--ui-border);
+}
+.record-error {
+  color: #9c263b;
+  font-size: var(--glucose-help);
+  line-height: 1.5;
+}
+.record-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* Reference-led symptom entry and review, isolated from the other record tabs. */
+.glucose-scope[data-record-tab="symptom"] {
+  --symptom-bg: #fafcf8;
+  --symptom-surface: #fff;
+  --symptom-sage: #e8f3e0;
+  --symptom-blue: #e0f3fb;
+  --symptom-blue-selected: #c4e2ef;
+  --symptom-lilac: #f1ebfc;
+  --symptom-ink: #101322;
+  --symptom-muted: #5b626c;
+  --symptom-border: #858c88;
+  --symptom-divider: #d6d0e5;
+  --symptom-focus: #476e48;
+  color: var(--symptom-ink);
+  background: #f7f9f5;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  gap: 20px;
+  padding: 24px 18px 32px;
+}
+.symptom-page-intro {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 20px 0 0;
+  color: var(--symptom-muted);
+}
+.symptom-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.symptom-page :is(button, input) {
+  font: inherit;
+  color: inherit;
+  min-width: 0;
+}
+.symptom-page button {
+  min-height: 48px;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+.symptom-page button:disabled {
+  cursor: not-allowed;
+}
+.symptom-page :is(button, input):focus-visible {
+  outline: 3px solid var(--symptom-focus);
+  outline-offset: 3px;
+}
+.symptom-page h2 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  letter-spacing: 0;
+}
+.symptom-page h3 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+.symptom-page p {
+  margin: 0;
+}
+.symptom-page .symptom-card {
+  padding: 20px;
+  border-radius: 26px;
+  background: var(--symptom-surface);
+  min-width: 0;
+  box-shadow: none;
+}
+.symptom-section-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--symptom-ink);
+}
+.symptom-page .symptom-form {
+  background: white;
+  padding-top: 20px;
+}
+.symptom-choice-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.symptom-choice-copy {
+  min-width: 0;
+}
+.symptom-heading-line {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.symptom-choice-copy .symptom-heading-line {
+  gap: 16px;
+}
+.symptom-choice-copy h2 {
+  font-size: 21px;
+}
+.symptom-choice-copy .symptom-heading-line > span {
+  font-size: 16px;
+  color: var(--symptom-muted);
+}
+.symptom-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 8px;
+}
+.symptom-choice-grid .symptom-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  border: 1px solid #dce1d8;
+  border-radius: 16px;
+  padding: 12px;
+  min-height: 54px;
+  background: #ffffffed;
+  box-shadow: none;
+  font-size: 18px;
+  font-weight: 500;
+}
+.symptom-choice[aria-pressed="true"] {
+  background: var(--symptom-blue-selected);
+  border-color: #557e8d;
+}
+.symptom-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #6c7568;
+  border-radius: 5px;
+  order: 1;
+}
+.symptom-choice[aria-pressed="true"] .symptom-check {
+  border-color: #345e6c;
+  background: #345e6c;
+  color: white;
+}
+.symptom-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 0;
+  margin-top: 16px;
+  padding-top: 0;
+}
+.symptom-custom > label {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.symptom-custom > p {
+  color: var(--symptom-muted);
+  font-size: 16px;
+  line-height: 24px;
+}
+.symptom-page input {
+  width: 100%;
+  min-height: 59px;
+  border: 1px solid #dce1d8;
+  border-radius: 15px;
+  background: white;
+  padding: 12px;
+  outline: none;
+}
+.symptom-page input::placeholder {
+  color: var(--symptom-muted);
+  opacity: 1;
+}
+.symptom-secondary-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.symptom-page .symptom-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #dce1d8;
+  border-radius: 16px;
+  background: white;
+  padding: 10px;
+  font-weight: 600;
+  min-height: 56px;
+}
+.symptom-secondary svg {
+  flex: none;
+}
+.symptom-page .symptom-secondary:disabled {
+  background: #f7f9f5;
+  color: #687062;
+  border-color: #dce1d8;
+}
+.symptom-page .symptom-recording {
+  background: #fbeaec;
+  color: #b83b4b;
+  border-color: #b83b4b;
+}
+.symptom-selected {
+  margin-top: 16px;
+}
+.symptom-selected-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #373531;
+  font-size: 18px;
+}
+.symptom-selected-heading p {
+  font-weight: 600;
+}
+.symptom-selected-heading button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  flex: none;
+  padding: 8px;
+  margin-block: -10.5px;
+}
+.symptom-selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.symptom-selected-list li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  min-width: 0;
+  padding-left: 12px;
+  border: 1px solid #557e8d;
+  border-radius: 14px;
+  background: var(--symptom-blue-selected);
+}
+.symptom-selected-list li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 8px 0;
+  margin-block: -10.5px;
+}
+.symptom-selected-list button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  border-radius: 14px;
+}
+.symptom-page .symptom-error {
+  color: #b83b4b;
+  margin-top: 12px;
+}
+.symptom-page .symptom-save {
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #2e3031;
+  color: white;
+  font-weight: 600;
+  margin-top: 16px;
+}
+/* Same controls reflow for larger text. */
+.large-font .glucose-scope[data-record-tab="symptom"] {
+  font-size: 20px;
+}
+.large-font .symptom-page :is(h2, h3) {
+  font-size: 25px;
+}
+.large-font .symptom-page-intro {
+  font-size: 18px;
+}
+.large-font .symptom-choice-copy .symptom-heading-line > span {
+  font-size: 18px;
+}
+.large-font .symptom-choice-grid {
+  grid-template-columns: 1fr;
+}
+.large-font .symptom-choice-grid .symptom-choice {
+  font-size: 22px;
+  min-height: 60px;
+}
+@container (width < 340px) {
+  .symptom-choice-heading {
+    gap: 10px;
+  }
+  .symptom-choice-copy h2 {
+    font-size: 19px;
+  }
+  .symptom-choice-grid .symptom-choice {
+    padding-inline: 10px;
+    gap: 9px;
+    font-size: 16px;
+  }
+  .large-font .symptom-choice-grid .symptom-choice {
+    font-size: 22px;
+  }
+}
+
+.symptom-selected-heading {
+  flex-wrap: nowrap;
+}
+.symptom-selected-heading p {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.symptom-selected-heading button:disabled {
+  color: #9aa295;
+}

@@ -1,0 +1,580 @@
+/* Pencil 23: categories lead the page; leave room for the floating microphone. */
+.record-overview.glucose-scope[data-record-tab] {
+  display: flex;
+  flex-direction: column;
+  max-width: 520px;
+  margin: 0 auto;
+  gap: 12px;
+  padding: 8px 18px 72px;
+  color: #373531;
+  background: #f7f9f5;
+}
+.record-overview .record-panel {
+  display: block;
+}
+.record-analysis,
+.record-measurement-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.record-analysis {
+  gap: 12px;
+}
+.record-measurement-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 484px;
+  padding: 16px;
+  background: #edf6e9;
+  border-radius: 26px;
+}
+.record-measure-tabs {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  min-height: 48px;
+  border-radius: 14px;
+  background: #e1ead8;
+}
+.record-measure-tabs::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  bottom: 4px;
+  width: calc((100% - 12px) / 2);
+  border-radius: 11px;
+  background: white;
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.record-measure-tabs[data-active-index="1"]::before {
+  transform: translateX(calc(100% + 4px));
+}
+.record-measure-tabs button {
+  position: relative;
+  z-index: 1;
+  min-height: 40px;
+  color: #596153;
+  font-size: var(--record-control);
+  font-weight: 500;
+}
+.record-measure-tabs button[aria-selected="true"] {
+  color: #373531;
+  font-weight: 600;
+}
+.record-measurement-content {
+  flex: 1;
+}
+.record-latest-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 48px;
+  gap: 8px;
+  align-items: center;
+  min-height: 64px;
+}
+.record-latest-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.record-latest-value strong {
+  font-size: 40px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.record-latest-value span {
+  font-size: 16px;
+  line-height: 24px;
+  white-space: nowrap;
+}
+.record-latest-row p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 24px;
+  color: #596153;
+}
+.record-expand {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: white;
+}
+.record-chart-tools {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.record-chart-tools > button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: white;
+  font-size: 16px;
+  font-weight: 600;
+}
+.record-measurement-card .glucose-chart {
+  display: block;
+  --chart-line: #2b8065;
+  --chart-grid: #dce1d8;
+  --chart-label: #596153;
+}
+.record-summary-stats {
+  display: flex;
+  flex-direction: column;
+  min-height: 108px;
+  padding-top: 11px;
+  border-top: 1px solid #d6dfcf;
+}
+.record-summary-stats > h2 {
+  min-height: 24px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: start;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.record-stats-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
+  text-align: left;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.record-stat-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.record-stat-columns > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: 16px;
+  line-height: 24px;
+}
+.record-stat-columns span {
+  color: #596153;
+}
+.record-stat-columns strong {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.record-overview .record-add-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.record-overview .record-add-actions button,
+.record-sage-action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 6px;
+  border: 1px solid #c8d7bc;
+  border-radius: 16px;
+  background: #dce8cc;
+  color: #373531;
+  font-size: 18px;
+  line-height: 27px;
+  font-weight: 600;
+}
+.record-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 0;
+  padding: 20px 12px;
+  color: #596153;
+  text-align: center;
+}
+.record-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: white;
+  color: #55704a;
+}
+.record-empty h3 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 33px;
+  font-weight: 600;
+  color: #373531;
+}
+.device-modal-panel.record-range-picker {
+  padding: 20px;
+  border-radius: 26px;
+  background: white;
+  color: #373531;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "Noto Sans TC", sans-serif;
+}
+.record-range-picker h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 33px;
+  font-weight: 600;
+}
+.record-range-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.record-range-choices button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  border-radius: 14px;
+  padding: 10px 14px;
+  background: #f7f9f5;
+  font-size: 18px;
+  line-height: 27px;
+}
+.record-range-choices button[aria-pressed="true"] {
+  background: #dce8cc;
+  font-weight: 600;
+}
+.device-modal-center:has(> .record-range-picker) {
+  padding-inline: 0;
+}
+.record-range-description {
+  margin: 0;
+  font-size: 16px;
+  line-height: 24px;
+  color: #596153;
+}
+.symptom-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.symptom-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 26px;
+  background: #edf6e9;
+}
+.symptom-overview-card > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+}
+.symptom-overview-card h2 {
+  font-size: 22px;
+  line-height: 33px;
+  font-weight: 600;
+}
+.symptom-overview-card > header button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 10px;
+  background: white;
+  border-radius: 14px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.symptom-overview-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 27px;
+}
+.symptom-overview-count strong {
+  font-size: 36px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.symptom-overview-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.symptom-overview-counts button {
+  padding: 8px 12px;
+  min-height: 40px;
+  background: white;
+  border-radius: 12px;
+}
+.symptom-recent-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  gap: 8px;
+}
+.symptom-recent-heading h2 {
+  font-size: 20px;
+  line-height: 30px;
+  font-weight: 600;
+}
+.symptom-recent-heading span {
+  color: #596153;
+  font-size: 16px;
+  line-height: 24px;
+}
+.symptom-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.symptom-recent-list article {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 80px;
+  padding: 12px 16px;
+  border-radius: 20px;
+  background: white;
+  font-size: 18px;
+  line-height: 27px;
+}
+.symptom-recent-list article p {
+  margin: 0;
+}
+.symptom-recent-list article p:first-child {
+  color: #596153;
+  font-size: 16px;
+  line-height: 24px;
+}
+.symptom-recent-empty {
+  padding: 18px;
+  background: white;
+  border-radius: 20px;
+  font-size: 18px;
+}
+.device-modal-panel.record-symptom-entry {
+  max-width: 520px;
+  margin: 0 auto;
+  height: min(790px, calc(100% - var(--app-safe-top) - 22px));
+  max-height: calc(100% - var(--app-safe-top) - 22px);
+  padding: 0;
+  border-radius: 26px 26px 0 0;
+  background: white;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  color: #373531;
+}
+.symptom-entry-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  padding: 8px 18px 0;
+}
+.symptom-entry-header button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+}
+.symptom-entry-header h2 {
+  font-size: 22px;
+  line-height: 33px;
+  font-weight: 600;
+}
+.symptom-entry-content {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 8px 18px max(16px, env(safe-area-inset-bottom));
+}
+.record-symptom-entry .symptom-page {
+  gap: 12px;
+}
+.record-symptom-entry .symptom-form.symptom-card {
+  padding: 14px 0 0;
+  border-radius: 0;
+  background: white;
+}
+.record-symptom-entry .symptom-heading-line {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.record-symptom-entry .symptom-choice-heading {
+  margin-bottom: 10px;
+}
+.record-symptom-entry .symptom-choice-grid {
+  gap: 8px;
+}
+.record-symptom-entry .symptom-choice-grid .symptom-choice {
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+.record-symptom-entry .symptom-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+}
+.record-symptom-entry .symptom-custom {
+  gap: 8px;
+  margin-top: 12px;
+}
+.record-symptom-entry .symptom-custom input {
+  min-height: 48px;
+}
+.record-symptom-entry .symptom-secondary-actions {
+  gap: 8px;
+}
+.record-symptom-entry .symptom-secondary {
+  min-height: 48px;
+  padding: 8px;
+}
+.record-symptom-entry .symptom-selected {
+  margin-top: 12px;
+}
+.record-symptom-entry .symptom-save {
+  margin-top: 12px;
+  min-height: 48px;
+  padding: 10px;
+  border: 1px solid #c8d7bc;
+  border-radius: 16px;
+  background: #dce8cc;
+  color: #373531;
+}
+.large-font .record-measurement-card {
+  min-height: 0;
+}
+.large-font .record-latest-row {
+  grid-template-columns: 1fr 48px;
+}
+.large-font .record-latest-row p {
+  grid-row: 2;
+  grid-column: 1/-1;
+  font-size: 20px;
+  line-height: 30px;
+}
+.large-font .record-expand {
+  grid-row: 1;
+  grid-column: 2;
+}
+.large-font .record-latest-value strong {
+  font-size: 48px;
+}
+.large-font
+  :is(
+    .record-latest-value span,
+    .record-stat-columns,
+    .record-chart-tools,
+    .record-stats-trigger,
+    .symptom-overview-counts,
+    .symptom-recent-heading span
+  ) {
+  font-size: 20px;
+  line-height: 30px;
+}
+.large-font .record-stat-columns strong {
+  font-size: 24px;
+  line-height: 36px;
+}
+.large-font .record-overview .record-add-actions {
+  grid-template-columns: 1fr;
+}
+.large-font .record-sage-action,
+.large-font .record-overview .record-add-actions button {
+  font-size: 22px;
+  line-height: 33px;
+}
+.large-font .symptom-entry-content .symptom-choice-grid {
+  grid-template-columns: 1fr;
+}
+.large-font .record-symptom-entry .symptom-heading-line {
+  align-items: start;
+  flex-direction: column;
+}
+@media (prefers-reduced-motion: reduce) {
+  .record-measure-tabs::before {
+    transition: none;
+  }
+}
+
+.record-latest-value {
+  min-width: 130px;
+}
+.record-symptom-entry .symptom-entry-content.glucose-scope[data-record-tab] {
+  padding: 8px 18px max(16px, env(safe-area-inset-bottom));
+  gap: 0;
+  background: white;
+}
+
+html:not(.large-font) .record-symptom-entry .record-datetime-selector {
+  min-height: 84px;
+  padding-block: 13px;
+  background: #f7f9f5;
+}
+
+html:not(.large-font) .record-symptom-entry {
+  --record-heading: 20px;
+}
+html:not(.large-font) .record-symptom-entry .record-datetime-selector .hm-body {
+  font-size: 18px;
+  line-height: 27px;
+}
+html:not(.large-font) .record-symptom-entry .symptom-page {
+  gap: 8px;
+}
+html:not(.large-font) .record-symptom-entry .symptom-form.symptom-card {
+  padding-top: 0;
+}
+html:not(.large-font) .record-symptom-entry .symptom-choice-heading {
+  margin-bottom: 8px;
+}
+html:not(.large-font)
+  .record-symptom-entry
+  :is(.symptom-custom, .symptom-selected, .symptom-save) {
+  margin-top: 8px;
+}
+html:not(.large-font) .record-symptom-entry .symptom-selected-heading {
+  font-size: 16px;
+  line-height: 24px;
+}
+html:not(.large-font) .record-symptom-entry .symptom-selected-heading button {
+  margin-block: -12px;
+}

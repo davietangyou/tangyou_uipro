@@ -1,0 +1,618 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap");
+
+@import "tailwindcss";
+@import "./styles/foundation.css";
+@import "./styles/profile.css";
+@import "./styles/chat.css";
+@import "./styles/questions.css";
+@import "./styles/glucose.css";
+@import "./styles/hba1c.css";
+@import "./styles/voice.css";
+@import "./styles/page-background.css";
+@import "./styles/record-tabs.css";
+@import "./styles/record-typography.css";
+
+@theme {
+  --color-bg: #f3f7ff;
+  --color-bg-quiet: #f8fafe;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #eef3ff;
+  --color-chart-surface: #f4f6ff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-primary: #155eef;
+  --color-primary-pressed: #0f46b7;
+  --color-primary-pale: #e7efff;
+  --color-border: #d5e0ef;
+  --color-divider: #e4eaf3;
+  --color-positive: #166534;
+  --color-positive-surface: #eaf6ec;
+  --color-warning: #92400e;
+  --color-warning-surface: #fff4d6;
+  --color-danger: #9f1239;
+  --color-danger-surface: #fdecec;
+  --color-focus-ring: #8bb5ff;
+
+  /* ── Home redesign palette (team design system tokens) ──────────────── */
+  --color-app-bg: #f5f6f6; /* warm off-white app background */
+  --color-sage: #dae7ca; /* sage surface (hero card) */
+  --color-sky: #d3e7ee; /* blue surface (問問 AI) */
+  --color-lilac: #e8dcf3; /* lilac surface (覆診清單) */
+  --color-sun: #fae388; /* yellow surface */
+  --color-ink: #373531; /* primary text */
+  --color-ink-soft: #686c66; /* secondary text */
+  --color-action: #2f3033; /* primary action */
+  --color-ok-bg: #e5f3e8; /* normal status background */
+  --color-ok-text: #206a3d; /* normal status text */
+  --color-ink-muted: #969c94; /* muted helper text */
+  --color-disabled: #d8dfd5; /* disabled surface */
+  --color-hairline: #e4e7e1; /* subtle divider on light surfaces */
+  --color-field: #eef1ec; /* soft neutral input / chip surface */
+
+  --font-sans:
+    "PingFang TC", "Noto Sans TC", system-ui, -apple-system, "PingFang HK",
+    "Microsoft JhengHei", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, #deeaff 0%, #ffffff 52%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+#device-shell,
+#root {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+#device-shell {
+  margin: 0 auto;
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+  overflow: clip;
+}
+
+#root {
+  margin: 0 auto;
+  /* Only the page/form scrollers may move. hidden still lets focus scroll
+     this host, briefly displacing the whole app while keyboard chrome changes. */
+  overflow: clip;
+  background: var(--color-app-bg);
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+#device-overlay-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 400;
+  overflow: clip;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+#device-overlay-layer > * {
+  pointer-events: auto;
+}
+
+/* iPhone 17 standard: 402 × 874 CSS px. The desktop presentation includes
+   a graphite device shell only when it can keep a 320px canvas; touch screens stay fluid. */
+@media (min-width: 600px) and (min-height: 750px) and (hover: hover) and (pointer: fine) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  #device-shell {
+    position: relative;
+    inset: auto;
+    /* Keep the iPhone 17's 402:874 viewport ratio while fitting underneath
+       desktop browser chrome. At full height this resolves to 402 × 874. */
+    width: min(402px, calc(46dvh - 23.92px));
+    height: min(874px, calc(100dvh - 52px));
+    box-sizing: content-box;
+    overflow: clip;
+    border: 10px solid #111317;
+    outline: 2px solid #73777f;
+    border-radius: 56px;
+    box-shadow:
+      0 1px 0 #aeb1b7 inset,
+      0 34px 90px rgb(15 23 42 / 28%),
+      0 8px 24px rgb(15 23 42 / 18%);
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+    border-radius: 46px;
+  }
+
+  #device-overlay-layer {
+    border-radius: 46px;
+  }
+
+  #device-shell::before {
+    content: "";
+    position: absolute;
+    z-index: 1000;
+    top: 12px;
+    left: 50%;
+    width: 116px;
+    height: 34px;
+    border-radius: 999px;
+    background:
+      radial-gradient(
+        circle at 86% 50%,
+        #17202a 0 4px,
+        #050608 5px 8px,
+        transparent 9px
+      ),
+      #050608;
+    box-shadow: 0 1px 2px rgb(255 255 255 / 10%) inset;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  #device-shell::after {
+    content: "";
+    position: absolute;
+    z-index: 1000;
+    bottom: 7px;
+    left: 50%;
+    width: 128px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgb(18 19 21 / 72%);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  #root > div > main {
+    padding-top: 48px;
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    width: 4px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #555a62, #a2a6ad 55%, #33373e);
+  }
+
+  body::before {
+    left: calc(50% - min(216px, calc(23dvh + 3.04px)));
+    top: calc(50% - 176px);
+    height: 92px;
+    box-shadow: 0 116px 0 #6f747c;
+  }
+
+  body::after {
+    right: calc(50% - min(216px, calc(23dvh + 3.04px)));
+    top: calc(50% - 116px);
+    height: 118px;
+  }
+
+  .question-modal[open] {
+    top: 50% !important;
+    left: 50% !important;
+    width: min(402px, calc(46dvh - 23.92px)) !important;
+    height: min(874px, calc(100dvh - 52px)) !important;
+    max-width: 402px !important;
+    max-height: 874px !important;
+    margin: 0 !important;
+    padding-top: 48px;
+    box-sizing: border-box;
+    border-radius: 46px;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Tabular numerals for health values to prevent width jitter (DESIGN §4.1) */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Type scale (DESIGN.md §4.2) */
+.t-health {
+  font-size: 64px;
+  line-height: 72px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.t-page {
+  font-size: 30px;
+  line-height: 40px;
+  font-weight: 700;
+}
+.t-section {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+.t-card {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
+.t-body {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 500;
+}
+.t-support {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+/* Large-font (elderly) mode ~125% (DESIGN.md §4.3) — default on */
+.large-font {
+  font-size: 22.5px;
+}
+.large-font .t-health {
+  font-size: 76px;
+  line-height: 84px;
+}
+.large-font .t-page {
+  font-size: 36px;
+  line-height: 48px;
+}
+.large-font .t-section {
+  font-size: 29px;
+  line-height: 40px;
+}
+.large-font .t-card {
+  font-size: 24px;
+  line-height: 34px;
+}
+.large-font .t-body {
+  font-size: 22px;
+  line-height: 34px;
+}
+.large-font .t-support {
+  font-size: 19px;
+  line-height: 28px;
+}
+
+/* ── Home redesign type scale (design-system sizes; scales with 放大字) ── */
+.hm-title {
+  font-size: 38px;
+  line-height: 46px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.hm-greet {
+  font-size: 23px;
+  line-height: 32px;
+  font-weight: 600;
+}
+.hm-cardtitle {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 600;
+}
+.hm-glucose {
+  font-size: 56px;
+  line-height: 60px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.hm-body {
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 500;
+}
+.hm-btn {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+}
+.hm-nav {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.large-font .hm-title {
+  font-size: 44px;
+  line-height: 52px;
+}
+.large-font .hm-greet {
+  font-size: 27px;
+  line-height: 36px;
+}
+.large-font .hm-cardtitle {
+  font-size: 24px;
+  line-height: 32px;
+}
+.large-font .hm-glucose {
+  font-size: 64px;
+  line-height: 68px;
+}
+.large-font .hm-body {
+  font-size: 20px;
+  line-height: 30px;
+}
+.large-font .hm-btn {
+  font-size: 25px;
+  line-height: 32px;
+}
+.large-font .hm-nav {
+  font-size: 17px;
+  line-height: 22px;
+}
+
+/* Clear focus visibility (DESIGN.md §21) */
+*:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Hide scrollbar for horizontal quick-question strip */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* AI chat loading dots */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.2s ease-out both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.22s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* One navigation geometry across all five pages; the canvas continues beneath it. */
+.app-layout {
+  container-type: inline-size;
+}
+.input-viewport-surface {
+  --input-viewport-motion: var(
+      --viewport-motion-duration,
+      var(--motion-enter, 240ms)
+    )
+    cubic-bezier(0.4, 0, 0.2, 1);
+  transition: height var(--input-viewport-motion);
+}
+.app-layout > .app-bottom-nav {
+  margin-bottom: calc(
+    (var(--input-chrome-progress) - 1) * var(--app-nav-height, 0px)
+  );
+  opacity: var(--input-chrome-progress);
+  transition:
+    margin-bottom var(--input-viewport-motion),
+    opacity var(--input-viewport-motion);
+}
+.app-layout[data-chrome-hidden="true"] > .app-bottom-nav {
+  pointer-events: none;
+}
+
+/* Forms own document scrolling; Safari retains its native keyboard pan. */
+html:has(.input-viewport-surface) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body:has(.input-viewport-surface) {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  overflow: visible;
+  overscroll-behavior: none;
+}
+
+#device-shell[data-keyboard-open]
+  [data-floating-voice]:has(button[data-voice-state="idle"]) {
+  visibility: hidden;
+  pointer-events: none;
+}
+.app-bottom-nav {
+  flex-shrink: 0;
+  width: 100%;
+  padding: 8px 18px max(24px, env(safe-area-inset-bottom));
+  background: transparent;
+}
+.app-bottom-nav ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: 72px;
+  padding: 6px;
+  border-radius: 26px;
+  gap: 2px;
+}
+.app-bottom-nav li {
+  min-width: 0;
+}
+.app-bottom-nav button {
+  width: 100%;
+  height: 72px;
+  min-width: 0;
+  min-height: 72px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 2px;
+  border-radius: 20px;
+  overflow-wrap: anywhere;
+}
+.app-bottom-nav .hm-nav {
+  font-family: "Noto Sans TC", var(--font-sans);
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 500;
+  white-space: normal;
+}
+.large-font .app-bottom-nav .hm-nav {
+  font-size: 19px;
+}
+.app-bottom-nav button:focus-visible {
+  outline: 3px solid #373531;
+  outline-offset: 3px;
+}
+.app-bottom-nav ul {
+  box-shadow: 0 3px 10px rgba(55, 53, 49, 0.05);
+}
+.app-bottom-nav ul {
+  align-items: stretch;
+}
+/* One persistent selection surface slides between cells. */
+.app-bottom-nav ul {
+  position: relative;
+  isolation: isolate;
+}
+.app-bottom-nav ul::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc((100% - 20px) / 5);
+  border-radius: 20px;
+  background: var(--color-action);
+  transform: translateX(calc(var(--nav-index) * (100% + 2px)));
+  transition: transform 280ms cubic-bezier(0.22, 0.7, 0.25, 1);
+}
+.app-bottom-nav li {
+  position: relative;
+  z-index: 1;
+}
+.app-bottom-nav button {
+  transition: color 160ms ease;
+}
+.app-bottom-nav button svg {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-bottom-nav ul::before,
+  .app-bottom-nav button {
+    transition: none;
+  }
+}
+
+/* Immediate feedback for the shared microphone, both docked and floating. */
+button.voice-feedback {
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center;
+}
+button.voice-feedback[data-pressed="true"] {
+  background: #386341;
+  color: #fff;
+  transform: scale(0.92);
+}
+button.voice-feedback[data-voice-state="listening"] {
+  background: var(--color-danger, #b91239);
+  color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  button.voice-feedback {
+    transition: none;
+  }
+  button.voice-feedback[data-pressed="true"] {
+    transform: none;
+  }
+}
+
+@import "./styles/medication.css";
+
+/* iOS date/time controls must include native padding inside the field width. */
+#device-shell
+  input:is(
+    [type="date"],
+    [type="time"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="week"]
+  ) {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+#device-shell
+  input:is(
+    [type="date"],
+    [type="time"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="week"]
+  )::-webkit-date-and-time-value {
+  min-inline-size: 0;
+  min-height: 1.5em;
+  padding: 0;
+  text-align: left;
+}

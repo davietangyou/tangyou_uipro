@@ -1,0 +1,293 @@
+/* Pencil 14/17. The cards share the App's existing viewport and navigation. */
+.home-page {
+  min-height: 100%;
+  color: #373531;
+  font-family: "Noto Sans TC", var(--font-sans);
+  container-type: inline-size;
+}
+.home-page button {
+  color: inherit;
+}
+.home-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 520px;
+  min-width: 0;
+  margin: auto;
+  padding: 8px 18px 12px;
+}
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+}
+.home-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #dce8cc;
+  color: #596153 !important;
+}
+.home-identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-brand,
+.home-greeting {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.home-brand {
+  color: #596153;
+  font-size: 12px;
+}
+.home-greeting {
+  font-size: 22px;
+  overflow-wrap: anywhere;
+}
+.home-font-button {
+  flex: none;
+  width: 62px;
+  min-height: 48px;
+  padding: 0;
+  border-radius: 24px;
+  background: white;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.home-voice-space {
+  flex: none;
+  width: 60px;
+  height: 60px;
+}
+.home-ai-hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: 26px;
+  background: #d7eaf0;
+  text-align: left;
+}
+.home-ai-copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.home-ai-copy strong {
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+.home-ai-description {
+  color: #596153;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.home-ai-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.home-ai-art {
+  flex: none;
+  width: 96px;
+  height: 96px;
+  background: var(--home-ai-art) -110px -36px / 202px 175.5px no-repeat;
+  mask-image:
+    linear-gradient(to right, transparent, #000 16px),
+    linear-gradient(to bottom, #000 80px, transparent);
+  mask-composite: intersect;
+  pointer-events: none;
+}
+.home-health-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.home-summary-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  min-width: 0;
+  min-height: 208px;
+  padding: 12px;
+  border-radius: 26px;
+}
+.home-glucose-card {
+  background: #d7eaf0;
+}
+.home-medication-card {
+  background: #dce8cc;
+}
+.home-summary-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.home-summary-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: white;
+}
+.home-summary-value {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.home-summary-value[data-empty="true"] {
+  font-size: 26px;
+}
+.home-summary-value small {
+  color: #596153;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.home-summary-hint {
+  margin: 0;
+  color: #596153;
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.home-glucose-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 24px;
+}
+.home-glucose-bars > span {
+  flex: 1;
+  min-width: 0;
+  border-radius: 4px;
+  background: #a4c7d1;
+}
+.home-glucose-bars > span[data-latest="true"] {
+  background: #373531;
+}
+.home-intake-progress {
+  display: flex;
+  gap: 4px;
+  height: 10px;
+}
+.home-intake-progress > span {
+  flex: 1;
+  min-width: 0;
+  height: 10px;
+  border-radius: 5px;
+  background: #bdcea9;
+}
+.home-intake-progress > span[data-confirmed="true"] {
+  background: #52684a;
+}
+.home-summary-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 48px;
+  width: 100%;
+  padding: 8px 4px;
+  border-radius: 16px;
+  background: white;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.home-page button:focus-visible {
+  outline: 3px solid #386341;
+  outline-offset: 3px;
+}
+.floating-voice.is-home-route .floating-voice-button {
+  border-width: 3px;
+  background: #dce8cc;
+  color: #302e2b;
+  box-shadow: 0 8px 26px #2b352933;
+}
+.large-font .home-brand {
+  font-size: 15px;
+}
+.large-font .home-greeting {
+  font-size: 26px;
+}
+.large-font .home-font-button {
+  font-size: 17px;
+}
+.large-font .home-ai-copy strong {
+  font-size: 30px;
+}
+.large-font
+  :is(
+    .home-ai-description,
+    .home-ai-cta,
+    .home-summary-card h2,
+    .home-summary-action
+  ) {
+  font-size: 20px;
+}
+.large-font :is(.home-summary-hint, .home-summary-value small) {
+  font-size: 18px;
+}
+.large-font .home-summary-value {
+  font-size: 36px;
+}
+.large-font .home-summary-card {
+  min-height: 240px;
+  gap: 8px;
+}
+@container (width < 350px) {
+  .home-header {
+    flex-wrap: wrap;
+  }
+  .home-identity {
+    flex-basis: calc(100% - 72px);
+  }
+  .home-font-button {
+    margin-left: 60px;
+  }
+  .home-voice-space {
+    margin-left: auto;
+  }
+}
+@container (width < 320px) {
+  .home-health-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 599px) {
+  .home-content {
+    padding-top: calc(env(safe-area-inset-top) + 8px);
+  }
+}
