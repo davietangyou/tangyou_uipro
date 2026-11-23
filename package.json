@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev.mjs",
+    "dev": "tsx server.ts",
+    "start": "NODE_ENV=production tsx server.ts",
     "build": "vite build",
     "build:cloud": "VITE_CLOUD_MODE=true vite build",
     "build:cloudflare": "npm run build:cloud -- --base=/ && node deploy/cloudflare/prepare-assets.mjs",
@@ -19,7 +20,7 @@
     "api:generate": "openapi-typescript backend/openapi.json -o src/generated/api.d.ts"
   },
   "dependencies": {
-    "@google/genai": "^1.35.0",
+    "@google/genai": "^3.6.1",
     "lucide-react": "^1.8.0",
     "motion": "^12.42.2",
     "openapi-fetch": "^0.17.0",
@@ -28,7 +29,8 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "tsx": "^4.23.13"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -37,13 +39,12 @@
     "miniflare": "5.20261019.1-beta",
     "openapi-typescript": "^7.13.0",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.13",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "wrangler": "4.151.3"
   },
   "engines": {
-    "node": ">=24.5.0"
+    "node": ">=22.0.0"
   },
   "allowScripts": {
     "esbuild@0.25.12": true,

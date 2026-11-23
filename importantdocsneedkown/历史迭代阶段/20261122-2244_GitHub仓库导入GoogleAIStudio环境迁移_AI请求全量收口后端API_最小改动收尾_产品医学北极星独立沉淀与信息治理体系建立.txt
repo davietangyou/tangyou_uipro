@@ -1,0 +1,225 @@
+================================================================================
+阶段迭代历史归档文档（第 1 阶段）
+================================================================================
+归档时间：2026-11-22 22:44（本地时间 UTC-8；对应香港时间 2026-11-23 14:44 UTC+8）
+阶段唯一指代名：GitHub仓库导入GoogleAIStudio环境迁移_AI请求全量收口后端API_最小改动收尾_产品医学北极星独立沉淀与信息治理体系建立
+前序阶段：无（本文件为仓库自 GitHub 导入 Google AI Studio 后的第 1 份阶段历史归档文档）
+授权状态：经用户显式授权重新整合生成，完整覆盖初始导入迁移、代码最小改动复核、双轨运行指南、信息治理体系及产品与医学价值北极星独立沉淀的全过程
+
+================================================================================
+一、本阶段起点与核心背景
+================================================================================
+
+1. 项目来源与初始状态
+   - 本仓库导入自 GitHub：`davietangyou/tangyou_uipro`（项目名 `tangde01` / 产品名「糖友導航 DiaGuide HK」），是一个面向香港糖尿病长者的 React 19 + Vite 6 + TypeScript 慢病决策辅助与自我管理应用，包含前端 SPA（`index.html` + `admin.html`）以及原生 Node HTTP AI 后端（`server/` + `shared/`）。
+   - 导入时的原始工程形态如下：
+     * 原 `package.json` 中 `"dev": "node scripts/dev.mjs"` 指向仓库中不存在的 `scripts/dev.mjs`；
+     * 原 `engines.node` 写为 `">=24.5.0"`，而 Google AI Studio 运行容器为 Node `v22.23.2`；
+     * 原 `vite.config.ts` 监听 `127.0.0.1:5173`（`strictPort: true`），`allowedHosts` 为 `['localhost', '127.0.0.1', 'tangyou-pro.alphathought.org']`，并将 `/api` 代理至 `127.0.0.1:8787`；
+     * 原 `server/index.ts` 独立监听 `127.0.0.1:8787`，`server/app.ts` 仅放行 `localhost`/`127.0.0.1` 的 `Host` 与 `Origin`（外加 `AI_ALLOWED_ORIGINS`）；
+     * 原 `server/providers.ts` 在未设 `AI_PROVIDER` 时默认走 `qwen`，Gemini 默认模型为过期的 `gemini-3.8-flash`，且 `GEMINI_VISION_MODEL` 未配置时会直接返回 503；
+     * 原项目中绝大多数 AI 能力（对话、问诊整理、三类拍照识别）已经迁移到后端 `server/`，但语音录音兜底转写 `src/services/audioTranscription.ts` 仍保留了旧版前端直连 `@google/genai` 的实现（模型 `gemini-3.5-flash`，读取 `process.env.GEMINI_API_KEY`，配合 `index.tsx` 中的全局 `window.fetch` 拦截器将 `generativelanguage.googleapis.com/v1beta/models/...` 重定向至 `tangyou-app.alphathought.org`）；与此同时，原 `vite.config.ts` 并未向前端注入 `process.env.GEMINI_API_KEY`；
+     * `importantdocsneedkown/` 目录下原有两份文档：`任何代码迭代变动者须知.txt`（旧版）与 `本UI重构后项目所对应原项目的核心业务明细.txt`（2267 行，承载底层核心业务逻辑与医学理论模型）。
+
+2. 本阶段最终落地的四项核心成果
+   - 使导入仓库在 Google AI Studio（单进程 3000 端口）零报错稳定运行并打通真实 Gemini API；
+   - 确立并落地“所有 AI 请求统一收口于后端 API 端”的架构共识；
+   - 在完全不触碰任何前端业务视图、组件、样式、临床 Prompt 与原有 AI 接口契约的前提下，完成最小化精准复核收尾，完整保住本机与线上真实使用的双进程无 `build` 模式（`dev:api` 8787 + `dev:ui` 5173）；
+   - 建立分层自洽的 `importantdocsneedkown/` 跨会话信息治理体系，并将《产品与医学价值北极星.txt》独立沉淀为认知传递型的项目灵魂宪章，同时明确了目录内各类文档的语体分工。
+
+================================================================================
+二、本阶段完整的认知演进脉络、关键讨论与决策取舍
+================================================================================
+
+本节按时间线客观还原这一阶段的认知转折与各项取舍背景，便于后续在无前序会话记忆的情况下直接了解现状的来龙去脉：
+
+1. 演进节点 1：初始导入迁移与过度改动的自我复核
+   - 在首次导入的迁移轮次，为了让应用在 AI Studio（Node 22 + 单进程 3000 端口）顺利运行，首批改动包括：
+     * 新增单进程入口 `server.ts`，统一挂载 `/api/*` 与 Vite middleware（生产态托管 `dist/`）；
+     * 将 `package.json` 的 `dev` 改为 `tsx server.ts`，新增 `start`，将 `engines.node` 放宽至 `>=22.0.0`，并将 `@google/genai` 从 `^1.35.0` 升级至 `^3.6.1`；
+     * 将 `server/app.ts` 的请求处理抽离为 `createAiRequestHandler`（保留原 `createAiServer` 签名以维持兼容），新增 `trustHost` 选项支持代理域名访问；
+     * 将 `server/providers.ts` 适配 Gemini（默认 `gemini-4-hydrogen`，未配 `GEMINI_VISION_MODEL` 时自动回退到 `model`）；
+     * 将前端直连的 `src/services/audioTranscription.ts` 迁移为调用后端新增的 `POST /api/ai/transcribe`，并移除了 `index.tsx` 中指向 `tangyou-app.alphathought.org` 的全局 `fetch` 拦截器；
+     * 删除过一次 `bun.lock`（随后在依赖安装过程中由包管理器自动重建），并曾修改过 `vite.config.ts` 的 `port`/`host`/`allowedHosts`。
+   - 随后结合《任何代码迭代变动者须知.txt》对全部 9 个触碰过的文件进行了逐一复核，识别出两类问题：
+     * `vite.config.ts` 的改动属于不必要改动（`server.ts` 以 `middlewareMode` 托管 Vite，并不需要改动 `vite.config.ts` 原有的 5173 端口与 `allowedHosts` 白名单），因此决定将 `vite.config.ts` 完整回滚至原始版本；
+     * 同时暴露出 5 处会影响直接发布平滑度的隐蔽问题（详述于演进节点 4），随后逐一进行了精准收口。
+
+2. 演进节点 2：`.env` 写法适配与密钥安全边界
+   - 用户提供的 `.env` 参考配置包含行内 `#` 注释，例如：
+     `AI_PROVIDER=gemini`
+     `GEMINI_MODEL=gemini-4-hydrogen  # gemini-4-hydrogen # gemini-3.5-flash`
+     `GEMINI_VISION_MODEL=gemini-4-hydrogen # gemini-4-hydrogen # gemini-3.5-flash`
+   - 围绕配置兼容性与密钥安全，形成了以下落地结果：
+     * 真实 API Key 不写入代码仓库或 `.env.example`，统一由运行环境（AI Studio Secrets 或本地 `.env.server.local`）注入；
+     * 在 `server/providers.ts` 中新增 `cleanEnvVal()`，自动剥离环境变量值中 `#` 之后的行内注释与首尾空白，并对 `GEMINI_API_KEY`、`DASHSCOPE_API_KEY` 做 `.trim()`，避免行内注释或粘贴空格导致模型 404 或鉴权异常；
+     * 实测 `POST /api/ai/chat`（粤语饮食血糖提问）经 `gemini-4-hydrogen` 成功返回完整的 5-Node 结构化响应（含 `activeNode: 3`、偏好澄清卡片、粤语同理回复与 `extractedProfileData`）。
+
+3. 演进节点 3：关于 `audioTranscription.ts` 与 `index.tsx` 的架构拍板
+   - 复核阶段曾就“是否将 `audioTranscription.ts` 回滚回前端直连”做过利弊拆解：
+     * 现状事实是：`src/services/dictation.ts` 会优先使用浏览器原生的 `SpeechRecognition`/`webkitSpeechRecognition`（覆盖 Chrome、Safari、Edge 等主流环境），仅在浏览器不支持原生语音识别时才动态导入 `audioTranscription.ts` 走录音转写兜底；旧版 `audioTranscription.ts` 属于早期前端直连架构遗留，且原 `vite.config.ts` 并未向前端注入 `GEMINI_API_KEY`；
+     * 而在后端提供 `/api/ai/transcribe` 后，由于 `server/index.ts` 通过 `createAiServer(provider.generate, { ...provider, ... })` 透传整个 `provider` 对象，本地 `dev:api`（8787）与 AI Studio 的 `server.ts`（3000）都能自动承接转写能力。
+   - 用户明确拍板：**所有 AI 请求都统一放在后端 API 端**。据此定案：
+     * 保留 `src/services/audioTranscription.ts` 调用 `POST apiPath("/api/ai/transcribe")`；
+     * 保留 `server/app.ts` 的 `/api/ai/transcribe` 路由与 `server/providers.ts` 的 `transcribe` 方法；
+     * 保留 `index.tsx` 中已移除的旧版 `generativelanguage.googleapis.com` 全局 `window.fetch` 拦截器，使前端不再篡改全局 `fetch`。
+
+4. 演进节点 4：围绕交付平滑度的 5 项精准收口与实测捕获的 2 个 Vite 6 暗坑
+   - 围绕“拿代码直接发布少踩坑、少动作”落地的 5 项调整：
+     1. **`vite.config.ts` 完整回滚原貌**：恢复 `port: 5173`、`host: '127.0.0.1'`、`strictPort: true`、`allowedHosts: ['localhost', '127.0.0.1', 'tangyou-pro.alphathought.org']`。
+     2. **`package.json` 将 `tsx` 从 `devDependencies` 移入 `dependencies`**：消除生产环境执行 `npm install --omit=dev && npm start` 时找不到 `tsx` 的隐患。
+     3. **`server.ts` 启动顺序与静态托管加固**：
+        - 解决了 ESM 静态 `import` 提升导致 `server/log.ts` 在顶层加载时尚未读到 `.env` 的问题，改为先按优先级加载可选本地文件 `['.env.server.local', '.env']`（不覆盖已有运行时环境变量），再在 `start()` 中动态导入 `./server/app`、`./server/providers`、`./server/log`；
+        - 完善 `serveStatic`：支持 `GET`/`HEAD`，保留 `/diaguide` 前缀与 SPA 页面路由回退，但对缺失的带非 `.html` 扩展名静态资源（如 `.js`、`.css`、`.json` 或图片）返回 HTTP `404` 而非误返 `index.html`。
+     4. **`server/app.ts` 限流与反代兼容加固**：
+        - 将 `POST /api/ai/transcribe` 纳入与其他 AI 接口一致的 `enforceRateLimit()`（60 秒窗口默认 20 次），补齐此前绕过限流的缺口；
+        - 在 `trustHost: true` 模式下，除放行 `origin.host === reqHost` 与 `AI_ALLOWED_ORIGINS` 外，补充放行浏览器不可伪造的 `Sec-Fetch-Site: same-origin`（避免简单 Nginx 反代未透传 `Host` 时误报 403，同时维持对 `cross-site` 跨站请求的 403 拦截）。
+     5. **`server/providers.ts` 环境变量清洗补齐**：对 `GEMINI_TRANSCRIBE_MODEL` 同样经过 `cleanEnvVal()` 清洗，并对两个 API Key 统一做 `.trim()`。
+   - 实测过程中额外捕获并根治了 2 个 Vite 6 底层暗坑：
+     * **暗坑 A（`allowedHosts` 合并行为）**：回滚 `vite.config.ts` 后，起初在 `server.ts` 给 `createViteServer` 传入 `server: { middlewareMode: true, allowedHosts: true }`，实测以 `Host: ais-dev-test.run.app` 访问仍返回 403 Blocked request。排查发现 Vite 6 的 `mergeConfig` 在合并“数组 `allowedHosts` + 布尔 `true`”时会把 `true` 拼进数组而不是覆盖原数组。通过在 `server.ts` 内联插件的 `configResolved(config)` 钩子中赋值 `config.server.allowedHosts = true`，既打通了 AI Studio 代理域名访问，又保持了 `vite.config.ts` 零改动。
+     * **暗坑 B（AI Studio 预览页 `/@vite/client:454:31` WebSocket 报错）**：AI Studio 预览窗捕获到 `Error: WebSocket closed without opened.`（位于 `/@vite/client` 第 452–454 行）。即使 `createViteServer` 已设置 `hmr: false, ws: false`，检查 `/@vite/client` 源码发现 Vite 6 仍在第 793 行生成 `hmrPort = 24678`，并在第 908 行执行 `transport.connect(createHMRHandler(handleMessage));` 尝试连接 WebSocket，在禁用 HMR 的 AI Studio 预览环境里必然触发断连异常。最终在 `server.ts` 的 `ai-studio-middleware-adapter` 插件中补充 `transform(code, id)` 钩子，仅针对 `vite/dist/client/client.mjs` 将该行 `transport.connect(...)` 替换为注释（完整保留 `updateStyle`、`createHotContext` 等客户端导出）。重启后通过请求 `/@vite/client` 确认第 908 行替换生效，预览报错彻底消失，且未触碰 `vite.config.ts` 与任何业务文件。
+
+5. 演进节点 5：对齐本地与线上“双进程无 build”真实用法，搭建 `importantdocsneedkown` 治理体系
+   - 用户明确了本机与线上真实使用的脚本链路（不走 `npm run build`，也不走 `server.ts`）：
+     * `nvm use 24 && npm run dev:ui`（监听 `127.0.0.1:5173`，预览地址 `http://127.0.0.1:5173/?preview=design`）；
+     * `nvm use 24 && AI_LOG_LEVEL=debug AI_LOG_RAW=1 npm run dev:api 2>&1 | tee /tmp/diaguide-api.log`（监听 `127.0.0.1:8787`，仅自动读取 `.env.server.local`）；
+     * 静态校验与格式化：`npm run lint`、`npx tsc --noEmit`、`npx prettier --write "**/*.{js,jsx,css,json}"`。
+   - 围绕这一真实工程语境，搭建了 `importantdocsneedkown/` 治理结构：
+     1. 新增 `GoogleAIStudio迭代代码下载后本地重启服务指南.md`：聚焦“已有本地环境曾成功启动过，现将 Google AI Studio 新代码同步应用后重新启动 UI 与 API 服务”的专属自洽指南（省略 ZIP 同步动作与从零搭环境步骤）。
+     2. 修订 `任何代码迭代变动者须知.txt`：优化第一条关于审慎落笔、最小必要改动的表述；删除旧第二条，重写为“从 Google AI Studio 下载代码 ZIP 到基于本地原有代码和环境重新发布，踩坑尽量少、动作尽量少”的交付北极星。
+     3. 新建 `历史迭代阶段/` 文件夹（含 `.gitkeep`）：确立“不自动追加、等待用户显式授权后生成 1 份精确到分钟时间戳 + 允许较长高区分度阶段指代名的 `.txt` 文件、已归档文件保持只读”的阶段记忆沉淀机制。
+     4. 新建 `00_文档总索引与信息治理规范.txt`：作为前置信息入口与信息运动治理指南，通过三颗效果北极星与认知传递型表达，系统讲清“怎么读”“怎么写”“哪些需显式授权”“哪些随工程变化诚实同步”以及“规则之外如何看向北极星自主推导”。
+
+6. 演进节点 6：产品与医学价值北极星的二次深度提炼、独立成文与文档语体共识确立
+   - 进一步通读全篇 2267 行的《本UI重构后项目所对应原项目的核心业务明细.txt》后，对初版总索引中的“产品与医学价值北极星”进行了二次升维提炼：
+     * 识别出初版表述偏重“打针、监测”等现有局部功能，尚未充分沉淀“身心一体与生命安全绝对底线”“老年医学分层与香港本地生活生态”“ODSF 区分信息需求与偏好敏感决策需求”“纵向患者理解与事实/推论分离的认识论谦逊”“健康素养普遍预防原则”以及“面向未来迭代的轻重取舍序位”；
+     * 将其重构为不绑定任何特定 UI 形态与单一功能模块的“核心宣言 + 五大底层认知公理”，并经用户确认单独沉淀为只读文件 `importantdocsneedkown/产品与医学价值北极星.txt`，与《核心业务明细》形成“立纲 vs 列目”的互补关系（二者同属默认只读、慎重演进、需显式授权修订的基石文档）。
+   - 同时确立了 `importantdocsneedkown/` 的书写气质与语体共识：
+     * **认知传递的效果高于规则枚举与强硬指令**：讲透用户处境、临床本质、工程因果与北极星，阅读者出于真正理解而自然遵守，无需借助“必须、一定、严禁”等命令式口吻；
+     * **目录内各类文档的自然语体分工**：总索引与产品北极星走认知传递型表达；历史迭代阶段文档走客观平实的陈述式表达，不制造指令感，忠实还原过程与权衡；工程须知与重启指南保持清晰、克制、实事求是。
+     * 据此对《产品与医学价值北极星.txt》做了全面文笔打磨，将该语体认知融入了《00_文档总索引与信息治理规范.txt》，并同步重新整合生成了本阶段历史文档。
+
+================================================================================
+三、本阶段逐文件变动全景清单（相对于 GitHub 原始导入代码）
+================================================================================
+
+【A. 代码与工程配置文件（共 6 个改动/新增，1 个已完整回滚）】
+
+1. `server.ts`（新增）
+   - Google AI Studio 单进程 3000 端口专用统一入口（同时支持 `NODE_ENV=production` 静态托管 `dist/`）。
+   - 主要实现：先加载可选 `.env.server.local` / `.env` 再动态导入 `./server/*`；`/api/*` 与 `/diaguide/api/*` 交由 `createAiRequestHandler(..., { trustHost: true })`；dev 态通过 `createViteServer`（`middlewareMode: true, hmr: false, ws: false` + `ai-studio-middleware-adapter` 插件将 `allowedHosts` 设为 `true` 并跳过 `client.mjs` 的 `transport.connect`）；prod 态 `serveStatic` 支持 `GET`/`HEAD` 与缺失非 `.html` 资源返回 404。
+
+2. `package.json`（修改）
+   - `"dev"`: `"node scripts/dev.mjs"` -> `"tsx server.ts"`；
+   - 新增 `"start"`: `"NODE_ENV=production tsx server.ts"`；
+   - `"engines.node"`: `">=24.5.0"` -> `">=22.0.0"`；
+   - `"@google/genai"`: `"^1.35.0"` -> `"^3.6.1"`；
+   - `"tsx": "^4.23.13"` 从 `devDependencies` 移入 `dependencies`；
+   - 原有 `dev:ui`、`dev:api`、`build`、`build:cloud`、`lint`、`test` 等所有脚本保持原样。
+
+3. `server/app.ts`（修改）
+   - 导出 `Transcribe`、`AiServerOptions`、`createAiRequestHandler`；`createAiServer` 保持原签名并在内部复用 `createAiRequestHandler`（维持 `server/index.ts` 完全向后兼容）；
+   - `pathname` 解析剥离 query 与 `/diaguide` 前缀；
+   - 支持 `options.trustHost`（用于 `server.ts`）：放行代理 `Host`/`X-Forwarded-Host` 同源与浏览器 `Sec-Fetch-Site: same-origin`，保持对跨站非法 `Origin` 的 403 拦截；
+   - 新增 `POST /api/ai/transcribe` 路由（音频 Base64 与 MIME 校验、超时中断、统一接入 `enforceRateLimit()`）；
+   - 原有 7 个接口（`/api/health`、`/api/ai/chat`、`/api/ai/chat/photo`、`/api/ai/questions/organize`、`/api/ai/medications/recognize`、`/api/ai/glucose/recognize`、`/api/ai/hba1c/recognize`）的校验、Prompt、Schema、Grounding 与响应格式均为 0 改动。
+
+4. `server/providers.ts`（修改）
+   - 新增 `cleanEnvVal()` 剥离行内 `#` 注释与首尾空格，并对 `DASHSCOPE_API_KEY` / `GEMINI_API_KEY` 做 `.trim()`；
+   - 默认 `provider` 判断：显式 `AI_PROVIDER` 优先，否则仅配 `DASHSCOPE_API_KEY` 时走 `qwen`，其余走 `gemini`；
+   - Gemini 默认模型更新为 `gemini-4-hydrogen`，`GEMINI_VISION_MODEL` 未配置时自动回退到 `model`；
+   - `GoogleGenAI` 客户端初始化附带 `httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }`；
+   - 新增 `transcribe` 方法（读取 `GEMINI_API_KEY` 与 `GEMINI_TRANSCRIBE_MODEL || 'gemini-3.5-transcribe'`）并在 `createProvider()` 返回对象中暴露，使 `server/index.ts` 通过 `{ ...provider }` 自动获得 `/api/ai/transcribe` 能力。
+
+5. `src/services/audioTranscription.ts`（修改）
+   - 移除前端 `@google/genai` 直连与浏览器端读取 `process.env.GEMINI_API_KEY`；
+   - 改为 `POST apiPath("/api/ai/transcribe")`（60s 超时与 JSON 错误处理）。
+
+6. `index.tsx`（修改）
+   - 移除旧版仅服务于前端直连 Gemini 的 `isFetchWritable()` 与 `window.fetch` 重定向拦截器（原目标 `tangyou-app.alphathought.org`）；
+   - 保留 `window.alert` iframe 兼容保护、React 挂载与 `cloudMode` / `loadClientDemo()` 原逻辑。
+
+7. `.env.example`（新增）
+   - 记录全部后端环境变量名与非敏感默认值（不含真实密钥），并附带反代场景下 `AI_ALLOWED_ORIGINS` 的说明。
+
+8. `vite.config.ts`（曾修改，现已 100% 完整回滚至原始版本）
+   - 与 GitHub 原始代码完全一致（`port: 5173`、`host: '127.0.0.1'`、`strictPort: true`、`allowedHosts: ['localhost', '127.0.0.1', 'tangyou-pro.alphathought.org']`、`/api` 代理至 `8787`）。
+
+9. `bun.lock`（附带状态）
+   - 迁移初期删过一次，随后安装 `@google/genai@latest` 时由包管理器自动重建，反映新依赖版本；npm 部署链路不依赖该文件。
+
+【B. 知识库与治理文档（`importantdocsneedkown/` 目录下）】
+
+1. `importantdocsneedkown/00_文档总索引与信息治理规范.txt`（新增并完善为认知传递型入口地图，覆盖 6 个目录组成部分、三颗北极星、阅读路径、信息流动与授权心法、以及“认知传递 / 客观陈述 / 清晰克制”的文笔表达理念）
+2. `importantdocsneedkown/产品与医学价值北极星.txt`（新增独立产品灵魂宪章，以认知传递型笔法沉淀核心宣言与五大底层认知公理，默认只读、慎重迭代、需显式授权）
+3. `importantdocsneedkown/任何代码迭代变动者须知.txt`（按用户指示优化第一条并重写第二条为交付北极星）
+4. `importantdocsneedkown/GoogleAIStudio迭代代码下载后本地重启服务指南.md`（新增本地双进程重启与验收 SOP）
+5. `importantdocsneedkown/历史迭代阶段/.gitkeep`（新建历史归档文件夹占位）
+6. `importantdocsneedkown/历史迭代阶段/<本文件>`（经用户显式授权重新整合生成的第 1 阶段完整历史归档文档）
+
+【C. 保持 0 改动的核心区域】
+- 所有业务页面与组件：`src/views/*`、`src/components/*`、`src/data/*`、`src/hooks/*`、`src/styles/*`、`src/admin*`、`src/CloudShell.tsx`、`src/App.tsx`、`App.tsx`；
+- 所有其他前端服务：`src/services/ai.ts`、`dictation.ts`、`photoRecognition.ts`、`safetyGate.ts`、`storage.ts`、`backendClient.ts`、`cloudSync.ts` 等；
+- 所有共享协议与知识库：`shared/*`；
+- 原有独立 API 入口与提示词：`server/index.ts`、`server/prompts.ts`、`server/grounding.ts`、`server/log.ts`、`server/glucosePhoto.ts`、`server/hba1cPhoto.ts`、`server/medicationPhoto.ts`；
+- 核心业务理论只读细则：`importantdocsneedkown/本UI重构后项目所对应原项目的核心业务明细.txt`。
+
+================================================================================
+四、当前运行架构与接口/配置基线速查
+================================================================================
+
+1. 双轨运行架构（两套运行形态彼此独立）
+   - 【日常本地与当前线上（主人真实用法，不走 `build`）】
+     * API 端：`nvm use 24` -> `AI_LOG_LEVEL=debug AI_LOG_RAW=1 npm run dev:api 2>&1 | tee /tmp/diaguide-api.log`
+       （入口 `server/index.ts`，监听 `127.0.0.1:8787`，仅自动读取 `.env.server.local`，不自动读 `.env`）
+     * UI 端：`nvm use 24` -> `npm run dev:ui`
+       （入口 `vite.config.ts`，监听 `127.0.0.1:5173`，`strictPort: true`，代理 `/api` -> `8787`，设计预览入口 `http://127.0.0.1:5173/?preview=design`）
+   - 【Google AI Studio 预览环境专用】
+     * 单进程：`npm run dev`（`tsx server.ts`，监听 `0.0.0.0:3000`，读运行时 Secrets 及可选 `.env.server.local`/`.env`）
+
+2. 后端 API 全量路由基线（共 8 个端点，统一位于 `server/app.ts`）
+   - `GET  /api/health`
+   - `POST /api/ai/chat`
+   - `POST /api/ai/chat/photo`
+   - `POST /api/ai/questions/organize`
+   - `POST /api/ai/medications/recognize`
+   - `POST /api/ai/glucose/recognize`
+   - `POST /api/ai/hba1c/recognize`
+   - `POST /api/ai/transcribe`（本阶段新增，承接原前端录音转写兜底）
+
+3. 关键环境变量基线（详见 `.env.example`）
+   - `AI_PROVIDER=gemini`
+   - `GEMINI_API_KEY=<由本地 .env.server.local 或运行平台 Secrets 注入，不写入代码仓库>`
+   - `GEMINI_MODEL=gemini-4-hydrogen`
+   - `GEMINI_VISION_MODEL=gemini-4-hydrogen`（留空回退 `GEMINI_MODEL`）
+   - `GEMINI_TRANSCRIBE_MODEL=gemini-3.5-transcribe`（可选，默认 `gemini-3.5-transcribe`）
+   - `AI_ALLOWED_ORIGINS=`（本地双进程模式经非本机域名访问时填写）
+
+================================================================================
+五、本阶段已完成的验证记录
+================================================================================
+
+1. 构建与静态类型校验：
+   - `compile_applet`（`vite build`）：通过（0 错误）；
+   - `lint_applet`（`tsc --noEmit`）：通过（0 错误）。
+2. Google AI Studio 开发态实测（`server.ts`，端口 3000）：
+   - 模拟代理域名 `Host: ais-dev-test.run.app` 访问 `/` 与 `/admin.html` -> HTTP 200；
+   - 检查 `/@vite/client` 第 908 行 -> 已替换为 `/* HMR WebSocket disabled in server.ts middlewareMode */`，消除了 `WebSocket closed without opened.` 报错；
+   - `GET /api/health` -> HTTP 200，`{"configured":true,"provider":"gemini","model":"gemini-4-hydrogen"}`；
+   - 模拟反代未透传 Host 的同源请求（`Sec-Fetch-Site: same-origin`）-> HTTP 200；
+   - 模拟跨站请求（`Origin: https://evil.example.com` + `Sec-Fetch-Site: cross-site`）-> HTTP 403 拦截；
+   - `POST /api/ai/transcribe` 空数据校验 -> HTTP 400（路由与参数校验生效）；
+   - `POST /api/ai/chat` 真实调用 `gemini-4-hydrogen` -> HTTP 200，返回完整广式粤语结构化 5-Node 响应（含 `activeNode: 3`、`preferenceQuestions`、`doctorQuestion`、`extractedProfileData` 等）。
+3. 生产态单进程模拟实测（`PORT=3099 NODE_ENV=production npx tsx server.ts`）：
+   - `/`、`/admin.html`、`/diaguide/`、`/api/health` -> 全部 HTTP 200；
+   - `/missing.js` -> 返回 HTTP 404（不再误返 HTML）。
+
+================================================================================
+六、本阶段结束时的工程现状、已知边界与背景备忘
+================================================================================
+
+1. **本地同步后的依赖状态**：本阶段将 `@google/genai` 升级到了 `^3.6.1`，并将 `tsx` 从 `devDependencies` 移入 `dependencies`。从 Google AI Studio 下载代码同步回已有本地仓库后，本地原有 `node_modules` 仍停留在旧依赖版本，执行一次 `npm install` 即可与当前 `package.json` 对齐（相关步骤已记录在《本地重启服务指南》中）。
+2. **`.env.server.local` 与 `.env` 的加载差异**：本地与线上运行的 `npm run dev:api`（入口 `server/index.ts`）只自动加载根目录的 `.env.server.local`，不自动加载 `.env`；Google AI Studio 专用的 `server.ts` 则按顺序加载可选的 `.env.server.local` 与 `.env`，且不覆盖平台已注入的运行时环境变量。
+3. **双轨适配的隔离边界**：本阶段将全部 Google AI Studio 平台特有的适配（3000 端口单进程托管、`allowedHosts = true` 覆盖、跳过 `client.mjs` 的 HMR WebSocket 建连）集中收口在 `server.ts` 内部，`vite.config.ts` 与 `server/index.ts` 均维持原始状态，以减少对本机与线上双进程无 `build` 链路的影响。
+4. **`/api/ai/transcribe` 的默认模型与触发条件**：后端转写接口当前默认模型为 `GEMINI_TRANSCRIBE_MODEL || 'gemini-3.5-transcribe'`。在 Chrome、Safari、Edge 等支持浏览器原生 `SpeechRecognition` 的环境中，语音输入会优先使用浏览器本地识别而不会触发该接口；仅在缺乏原生语音识别能力的环境下才会回退调用后端转写。若不同账号或环境下模型权限有差异，在 `.env.server.local` 中配置 `GEMINI_TRANSCRIBE_MODEL` 即可切换，无需修改代码。
+5. **`importantdocsneedkown/` 的现行治理状态**：本阶段建立的分层治理中，《产品与医学价值北极星.txt》与《本UI重构后项目所对应原项目的核心业务明细.txt》同为默认只读基石，不随日常代码迭代自动改写，仅在用户显式明确授权时修订；《历史迭代阶段/》中已归档文件保持只读，后续新阶段在获用户显式授权后，按精确到分钟的时间戳与高区分度阶段指代名新增独立 `.txt` 文件，并沿用客观平实的陈述式语体。

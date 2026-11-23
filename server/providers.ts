@@ -6,11 +6,14 @@ import { log, logModelText } from './log';
 export type AiProvider = 'qwen' | 'gemini';
 
 export function createProvider(env: NodeJS.ProcessEnv = process.env, request: typeof fetch = fetch) {
-  const provider = env.AI_PROVIDER || 'qwen';
+  const cleanEnvVal = (v?: string) => v?.split('#')[0].trim() || '';
+  const dashscopeKey = env.DASHSCOPE_API_KEY?.trim() || '';
+  const geminiKey = env.GEMINI_API_KEY?.trim() || '';
+  const provider = cleanEnvVal(env.AI_PROVIDER) || (dashscopeKey && !geminiKey ? 'qwen' : 'gemini');
   if (provider !== 'qwen' && provider !== 'gemini') throw new Error('AI_PROVIDER must be qwen or gemini');
-  const key = provider === 'qwen' ? env.DASHSCOPE_API_KEY : env.GEMINI_API_KEY;
-  const model = provider === 'qwen' ? env.QWEN_MODEL || 'qwen3.8-flash' : env.GEMINI_MODEL || 'gemini-3.8-flash';
-  const visionModel = provider === 'qwen' ? env.QWEN_VISION_MODEL : env.GEMINI_VISION_MODEL;
+  const key = provider === 'qwen' ? dashscopeKey : geminiKey;
+  const model = provider === 'qwen' ? (cleanEnvVal(env.QWEN_MODEL) || 'qwen3.8-flash') : (cleanEnvVal(env.GEMINI_MODEL) || 'gemini-4-hydrogen');
+  const visionModel = provider === 'qwen' ? cleanEnvVal(env.QWEN_VISION_MODEL) : (cleanEnvVal(env.GEMINI_VISION_MODEL) || model);
   const geminiMaxOutputTokens = Number(env.GEMINI_MAX_OUTPUT_TOKENS || 50_000);
   const geminiTimeoutMs = Number(env.GEMINI_TIMEOUT_MS || 600_000);
   const qwenMaxOutputTokens = Number(env.QWEN_MAX_OUTPUT_TOKENS || 50_000);
@@ -76,7 +79,7 @@ export function createProvider(env: NodeJS.ProcessEnv = process.env, request: ty
       }
     };
   } else {
-    const client = key ? new GoogleGenAI({apiKey:key}) : null;
+    const client = key ? new GoogleGenAI({apiKey:key, httpOptions:{headers:{'User-Agent':'aistudio-build'}}}) : null;
     generate = async ({system,instruction,data,schema,signal,image}) => {
       if (image) requireVision();
       const started = performance.now();
@@ -117,11 +120,34 @@ export function createProvider(env: NodeJS.ProcessEnv = process.env, request: ty
       }
     };
   }
+  const transcribeClient = geminiKey
+    ? new GoogleGenAI({ apiKey: geminiKey, httpOptions: { headers: { 'User-Agent': 'aistudio-build' } } })
+    : null;
+  const transcribeModel = cleanEnvVal(env.GEMINI_TRANSCRIBE_MODEL) || 'gemini-3.5-transcribe';
+  const transcribe = async ({ audioBase64, mimeType, signal }: { audioBase64: string; mimeType: string; signal: AbortSignal }): Promise<string> => {
+    if (!transcribeClient) {
+      throw new AiError('NOT_CONFIGURED', '尚未設定語音轉寫服務，請先設定後端金鑰。', 503);
+    }
+    const response = await transcribeClient.models.generateContent({
+      model: transcribeModel,
+      contents: {
+        parts: [
+          { inlineData: { mimeType, data: audioBase64 } },
+          { text: '你是一個語音輸入法助手。請將這段錄音準確地轉換為繁體中文（廣東話）。請只返回聽寫出的文字內容，不要包含任何額外的解釋、旁白或標點。' },
+        ],
+      },
+      config: {
+        abortSignal: signal,
+        httpOptions: { timeout: geminiTimeoutMs },
+      },
+    });
+    return response.text?.trim() || '';
+  };
   log('info', 'provider.ready', {
     provider,
     model,
     visionModel: visionModel || null,
     configured: Boolean(key?.trim()),
   });
-  return {provider:provider as AiProvider,model,configured:Boolean(key?.trim()),generate};
+  return {provider:provider as AiProvider,model,configured:Boolean(key?.trim()),generate,transcribe};
 }

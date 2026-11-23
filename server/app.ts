@@ -5,7 +5,7 @@ import { parseGlucosePhotoResult } from '../shared/glucosePhoto';
 import { GLUCOSE_PHOTO_SYSTEM, GLUCOSE_PHOTO_INSTRUCTION, GLUCOSE_PHOTO_SCHEMA } from './glucosePhoto';
 import { parseMedicationPhoto, parseMedicationPhotoResult, type MedicationPhoto } from '../shared/medicationPhoto';
 import { validatePhotoBytes, PHOTO_SYSTEM, PHOTO_INSTRUCTION, PHOTO_SCHEMA } from './medicationPhoto';
-import { createServer, type IncomingMessage } from 'node:http';
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { AiError, parseChatRequest, parseChatResult, parseOrganizeRequest, type OrganizeRequest, type HealthContext } from '../shared/ai';
@@ -220,25 +220,36 @@ function buildEnhancedInstruction(
 
 // ── Server ──────────────────────────────────────────────────────────────────
 
-export function createAiServer(generate: Generate, options: { configured?: boolean; timeoutMs?: number; limit?: number; provider?: 'qwen' | 'gemini'; model?: string; allowedOrigins?: string[] } = {}) {
+export type Transcribe = (input: { audioBase64: string; mimeType: string; signal: AbortSignal }) => Promise<string>;
+export type AiServerOptions = { configured?: boolean; timeoutMs?: number; limit?: number; provider?: 'qwen' | 'gemini'; model?: string; allowedOrigins?: string[]; trustHost?: boolean; transcribe?: Transcribe };
+
+export function createAiRequestHandler(generate: Generate, options: AiServerOptions = {}) {
   const calls: number[] = [];
   const timeoutMs = options.timeoutMs ?? Number(process.env.AI_TIMEOUT_MS || 600_000);
   const maxJsonBytes = 10 * 1024 * 1024;
   const maxPhotoBytes = 10 * 1024 * 1024;
-  const server = createServer(async (req, res) => {
+  return async (req: IncomingMessage, res: ServerResponse) => {
     const rid = randomUUID();
     const started = performance.now();
     requestContext.enterWith({ rid });
     if (!res.headersSent) res.setHeader('X-Request-ID', rid);
+    let rawPathname = '/';
+    try {
+      rawPathname = new URL(req.url || '/', 'http://localhost').pathname;
+    } catch {
+      rawPathname = (req.url || '/').split('?')[0];
+    }
+    const pathname = rawPathname.replace(/^\/diaguide(?=\/api\/)/, '');
     const route =
-      req.url === '/api/health' ? 'health'
-        : req.url === '/api/ai/chat' ? 'chat'
-          : req.url === '/api/ai/chat/photo' ? 'chatPhoto'
-            : req.url === '/api/ai/glucose/recognize' ? 'glucose'
-              : req.url === '/api/ai/hba1c/recognize' ? 'hba1c'
-                : req.url === '/api/ai/medications/recognize' ? 'medication'
-                  : req.url === '/api/ai/questions/organize' ? 'organize'
-                    : 'unknown';
+      pathname === '/api/health' ? 'health'
+        : pathname === '/api/ai/chat' ? 'chat'
+          : pathname === '/api/ai/chat/photo' ? 'chatPhoto'
+            : pathname === '/api/ai/glucose/recognize' ? 'glucose'
+              : pathname === '/api/ai/hba1c/recognize' ? 'hba1c'
+                : pathname === '/api/ai/medications/recognize' ? 'medication'
+                  : pathname === '/api/ai/questions/organize' ? 'organize'
+                    : pathname === '/api/ai/transcribe' ? 'transcribe'
+                      : 'unknown';
     const elog = (level: 'debug' | 'info' | 'warn' | 'error', event: string, fields: Record<string, unknown> = {}) =>
       log(level, event, { rid, route, ...fields });
     elog('debug', 'ai.request.start', {
@@ -270,27 +281,67 @@ export function createAiServer(generate: Generate, options: { configured?: boole
       res.end(JSON.stringify(body));
     };
     try {
-      if (!localHost(req.headers.host || '')) throw new AiError('FORBIDDEN', '只接受本機請求。', 403);
+      const reqHost = ((req.headers['x-forwarded-host'] as string | undefined)?.split(',')[0]?.trim() || req.headers.host || '');
+      if (!options.trustHost && !localHost(reqHost)) throw new AiError('FORBIDDEN', '只接受本機請求。', 403);
       if (req.headers.origin) {
         let valid = false;
-        try { const origin = new URL(req.headers.origin); valid = ['http:','https:'].includes(origin.protocol) && (localHost(origin.host) || (origin.origin === req.headers.origin && (options.allowedOrigins || []).includes(origin.origin))); } catch {}
+        try {
+          const origin = new URL(req.headers.origin);
+          valid = ['http:','https:'].includes(origin.protocol) && (
+            localHost(origin.host) ||
+            (Boolean(options.trustHost) && reqHost !== '' && origin.host === reqHost) ||
+            (Boolean(options.trustHost) && req.headers['sec-fetch-site'] === 'same-origin') ||
+            (origin.origin === req.headers.origin && (options.allowedOrigins || []).includes(origin.origin))
+          );
+        } catch {}
         if (!valid) throw new AiError('FORBIDDEN', '不接受此來源的請求。', 403);
       }
-      if (req.url === '/api/health' && req.method === 'GET') return send(200, { configured: options.configured !== false, provider: options.provider, model: options.model });
-      if (!['/api/ai/chat','/api/ai/questions/organize','/api/ai/medications/recognize','/api/ai/glucose/recognize','/api/ai/hba1c/recognize','/api/ai/chat/photo'].includes(req.url || '')) throw new AiError('NOT_FOUND', '找不到此接口。', 404);
+      if (pathname === '/api/health' && req.method === 'GET') return send(200, { configured: options.configured !== false, provider: options.provider, model: options.model });
+      if (!['/api/ai/chat','/api/ai/questions/organize','/api/ai/medications/recognize','/api/ai/glucose/recognize','/api/ai/hba1c/recognize','/api/ai/chat/photo','/api/ai/transcribe'].includes(pathname)) throw new AiError('NOT_FOUND', '找不到此接口。', 404);
       if (req.method !== 'POST') throw new AiError('METHOD_NOT_ALLOWED', '此接口只接受 POST。', 405);
       if (!req.headers['content-type']?.startsWith('application/json')) throw new AiError('CONTENT_TYPE', '請使用 JSON 資料格式。', 415);
-      if (options.configured === false) throw new AiError('NOT_CONFIGURED', '尚未設定 AI 服務，請先設定後端金鑰。', 503);
-      const now = Date.now(); while (calls.length && calls[0] < now - 60_000) calls.shift();
-      if (calls.length >= (options.limit ?? 20)) {
-        elog('warn', 'ai.rate_limited', { windowCount: calls.length, limit: options.limit ?? 20 });
-        throw new AiError('RATE_LIMITED', '請求太頻密，請稍後再試。', 429);
+
+      const enforceRateLimit = () => {
+        const now = Date.now(); while (calls.length && calls[0] < now - 60_000) calls.shift();
+        if (calls.length >= (options.limit ?? 20)) {
+          elog('warn', 'ai.rate_limited', { windowCount: calls.length, limit: options.limit ?? 20 });
+          throw new AiError('RATE_LIMITED', '請求太頻密，請稍後再試。', 429);
+        }
+        calls.push(now);
+      };
+
+      if (pathname === '/api/ai/transcribe') {
+        if (!options.transcribe) throw new AiError('NOT_CONFIGURED', '尚未設定語音轉寫服務，請先設定後端金鑰。', 503);
+        enforceRateLimit();
+        const raw = await readBody(req, maxPhotoBytes);
+        const audioData = typeof (raw as any)?.data === 'string' ? (raw as any).data.trim() : '';
+        const mimeRaw = typeof (raw as any)?.mimeType === 'string' ? (raw as any).mimeType.trim() : 'audio/webm';
+        const mimeType = mimeRaw.split(';')[0].trim() || 'audio/webm';
+        if (!audioData || audioData.length > 10 * 1024 * 1024 || !/^[A-Za-z0-9+/=]+$/.test(audioData)) {
+          throw new AiError('INVALID_INPUT', '錄音資料格式不正確。');
+        }
+        if (!/^(audio|video)\/[a-z0-9.+-]+$/i.test(mimeType)) {
+          throw new AiError('INVALID_INPUT', '錄音格式不支援。');
+        }
+        const controller = new AbortController();
+        const onClose = () => { if (!res.writableEnded) controller.abort(); };
+        res.on('close', onClose);
+        let timer: ReturnType<typeof setTimeout>;
+        try {
+          const text = await Promise.race([
+            options.transcribe({ audioBase64: audioData, mimeType, signal: controller.signal }),
+            new Promise<never>((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new AiError('TIMEOUT', '語音轉寫逾時，請再試一次。', 504)); }, timeoutMs); }),
+          ]);
+          return send(200, { text });
+        } finally { clearTimeout(timer!); res.off('close', onClose); }
       }
-      calls.push(now);
-      const glucosePhoto = req.url === '/api/ai/glucose/recognize';
-      const hba1cPhoto = req.url === '/api/ai/hba1c/recognize';
-      const chatPhoto = req.url === '/api/ai/chat/photo';
-      const photoRequest = hba1cPhoto || glucosePhoto || req.url === '/api/ai/medications/recognize';
+
+      if (options.configured === false) throw new AiError('NOT_CONFIGURED', '尚未設定 AI 服務，請先設定後端金鑰。', 503);
+      enforceRateLimit();
+      const glucosePhoto = pathname === '/api/ai/glucose/recognize';
+      const hba1cPhoto = pathname === '/api/ai/hba1c/recognize';
+      const chatPhoto = pathname === '/api/ai/chat/photo';
+      const photoRequest = hba1cPhoto || glucosePhoto || pathname === '/api/ai/medications/recognize';
       const raw = await readBody(req, (photoRequest || chatPhoto) ? maxPhotoBytes : maxJsonBytes);
       elog('debug', 'ai.request.body', {
         bodyBytes: req.headers['content-length'],
@@ -298,7 +349,7 @@ export function createAiServer(generate: Generate, options: { configured?: boole
         imageMime: (raw as any)?.image?.mimeType,
         imageDataLen: typeof (raw as any)?.image?.data === 'string' ? (raw as any).image.data.length : undefined,
       });
-      const chat = chatPhoto || req.url === '/api/ai/chat';
+      const chat = chatPhoto || pathname === '/api/ai/chat';
       const withPhoto = chatPhoto ? parseChatPhotoRequest(raw) : null;
       const data = withPhoto ? withPhoto.chat : photoRequest ? parseMedicationPhoto(raw) : chat ? parseChatRequest(raw) : parseOrganizeRequest(raw);
       const image = withPhoto?.image || (photoRequest ? data as MedicationPhoto : undefined);
@@ -426,7 +477,11 @@ export function createAiServer(generate: Generate, options: { configured?: boole
       });
       send(e.status, { error: { code: e.code, message: e.message } });
     }
-  });
+  };
+}
+
+export function createAiServer(generate: Generate, options: AiServerOptions = {}) {
+  const server = createServer(createAiRequestHandler(generate, options));
   server.requestTimeout = 620_000;
   server.headersTimeout = 10_000;
   return server;
